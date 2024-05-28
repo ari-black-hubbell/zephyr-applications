@@ -1,0 +1,5 @@
+{
+    "nrf-connect.applications": [
+        "${workspaceFolder}/lesson1/blefund_less1_exer1"
+    ]
+}

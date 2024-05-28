@@ -1,0 +1,28 @@
+empty_file.o: \
+ /Users/ariannnahblack/zephyrproject/zephyr/misc/empty_file.c \
+ /Users/ariannnahblack/zephyrproject/zephyr/boards/nordic/nrf52840dk/nrf52840dk_nrf52840.dts \
+ /Users/ariannnahblack/zephyrproject/zephyr/dts/arm/nordic/nrf52840_qiaa.dtsi \
+ /Users/ariannnahblack/zephyrproject/zephyr/dts/common/mem.h \
+ /Users/ariannnahblack/zephyrproject/zephyr/dts/arm/nordic/nrf52840.dtsi \
+ /Users/ariannnahblack/zephyrproject/zephyr/dts/arm/armv7-m.dtsi \
+ /Users/ariannnahblack/zephyrproject/zephyr/dts/common/skeleton.dtsi \
+ /Users/ariannnahblack/zephyrproject/zephyr/dts/common/nordic/nrf_common.dtsi \
+ /Users/ariannnahblack/zephyrproject/zephyr/include/zephyr/dt-bindings/adc/adc.h \
+ /Users/ariannnahblack/zephyrproject/zephyr/include/zephyr/dt-bindings/dt-util.h \
+ /Users/ariannnahblack/zephyrproject/zephyr/include/zephyr/sys/util_macro.h \
+ /Users/ariannnahblack/zephyrproject/zephyr/include/zephyr/sys/util_internal.h \
+ /Users/ariannnahblack/zephyrproject/zephyr/include/zephyr/sys/util_loops.h \
+ /Users/ariannnahblack/zephyrproject/zephyr/include/zephyr/sys/util_listify.h \
+ /Users/ariannnahblack/zephyrproject/zephyr/include/zephyr/sys/util_internal_is_eq.h \
+ /Users/ariannnahblack/zephyrproject/zephyr/include/zephyr/sys/util_internal_util_inc.h \
+ /Users/ariannnahblack/zephyrproject/zephyr/include/zephyr/sys/util_internal_util_dec.h \
+ /Users/ariannnahblack/zephyrproject/zephyr/include/zephyr/sys/util_internal_util_x2.h \
+ /Users/ariannnahblack/zephyrproject/zephyr/include/zephyr/dt-bindings/adc/nrf-adc.h \
+ /Users/ariannnahblack/zephyrproject/zephyr/include/zephyr/dt-bindings/gpio/gpio.h \
+ /Users/ariannnahblack/zephyrproject/zephyr/include/zephyr/dt-bindings/i2c/i2c.h \
+ /Users/ariannnahblack/zephyrproject/zephyr/include/zephyr/dt-bindings/input/input-event-codes.h \
+ /Users/ariannnahblack/zephyrproject/zephyr/include/zephyr/dt-bindings/pinctrl/nrf-pinctrl.h \
+ /Users/ariannnahblack/zephyrproject/zephyr/include/zephyr/dt-bindings/pwm/pwm.h \
+ /Users/ariannnahblack/zephyrproject/zephyr/dts/common/freq.h \
+ /Users/ariannnahblack/zephyrproject/zephyr/dts/arm/nordic/override.dtsi \
+ /Users/ariannnahblack/zephyrproject/zephyr/boards/nordic/nrf52840dk/nrf52840dk_nrf52840-pinctrl.dtsi

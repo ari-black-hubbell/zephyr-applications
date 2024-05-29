@@ -1,6 +1,9 @@
 
 /* ble_cus.h */
 
+#ifndef BLE_CUS_H__
+#define BLE_CUS_H__
+
 /* module imports */ 
 #include <stdint.h>
 #include <stdbool.h>

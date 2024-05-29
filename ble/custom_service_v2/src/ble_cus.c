@@ -4,8 +4,10 @@
 /* module imports */ 
 // standard c
 #include <string.h>
+
 // local files
 #include "ble_cus.h"
+
 // zephyr library
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>

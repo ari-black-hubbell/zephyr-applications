@@ -1,6 +1,7 @@
 
 /* main.c */
 
+/* module imports */ 
 #include "ble_cus.h"
 
 /* (macro) add a custom service instance named m_cus */

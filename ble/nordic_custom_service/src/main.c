@@ -47,6 +47,8 @@ static void bt_ready(int err) {
         }
         // give a semaphore to increment its count
         k_sem_give(&ble_init_ok);
+        // configure connection callbacks
+        bt_conn_cb_register(&conn_callbacks);
 }
 
 /* our bt_conn (bluetooth connection) pointer. */
@@ -110,11 +112,20 @@ static void le_param_updated(struct bt_conn *conn, u16_t interval, u16_t latency
         }
 }
 
+/* BLE connection status callback structure */
+static struct bt_conn_cb conn_callbacks = {
+        .connected              = connected,
+        .disconnected           = disconnected,
+        .le_param_req           = le_param_req,
+        .le_param_pdated        = le_param_updated
+};
+
 
 /* < TODO: add function description here > */
 int main(void) {
         // enable the bluetooth host stack
         err = bt_enable(bt_ready);    
+
 
 
 

@@ -1,5 +1,15 @@
 {
     "nrf-connect.applications": [
-        "${workspaceFolder}/custom_service"
-    ]
+        "${workspaceFolder}/custom_service",
+        "${workspaceFolder}/nordic_custom_service"
+    ],
+    "files.associations": {
+        "printk.h": "c",
+        "gpio.h": "c",
+        "bluetooth.h": "c",
+        "hci.h": "c",
+        "conn.h": "c",
+        "uuid.h": "c",
+        "string.h": "c"
+    }
 }

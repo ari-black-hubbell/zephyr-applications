@@ -49,18 +49,18 @@ static void bt_ready(int err) {
         k_sem_give(&ble_init_ok);
 }
 
-/* our bt_conn (bluetooth connection) object. */
+/* our bt_conn (bluetooth connection) pointer. */
 struct bt_conn *my_connection;
 
-/* check if the connection (bt_conn) is valid. */
+/* check if the connection is valid. */
 static void connected(struct bt_conn *conn, u8_t err) {
-        // structure to hold bt_conn information
+        // structure to hold connection information
         struct b_t_conn_info info;
         // char array to hold bt address
         char addr[BT_ADDR_LE_STR_LEN];
         // check if connection failed
         if (err) { printk("Connection failed (err %u)\n", err); return; }
-        // check if bt_conn information is valid
+        // check if connection information is valid
         else if (bt_conn_get_info(conn, &info)) { printk("Could not parse connection info\n"); }
         // display connection information
         else {
@@ -73,6 +73,40 @@ static void connected(struct bt_conn *conn, u8_t err) {
                 Peripheral latency: %u                  \n\
                 Connection supervisory timeout: %u      \n"     // note: used term "peripheral" instead of "slave" (...)
                 , addr, info.role, info.le.interval, info.le.latency, info.le.timeout);
+        }
+}
+
+/* reset the connection pointer once disconnected. 
+ * returns true if parameters are acceptable, and returns false otherwise.
+*/
+static void disconnected(struct bt_conn *conn, u8_t reason) {
+        printk("Disconnected (reason %u)\n", reason);
+        my_connection = NULL;
+}
+
+/* check that the supplied parameters are valid. */
+static bool le_param_req(struct bt_conn *conn, struct bt_le_conn_param param) {
+        return true;
+}
+
+/* update connection parameters. */
+static void le_param_updated(struct bt_conn *conn, u16_t interval, u16_t latency, u16_t timeout) {
+        // structure to hold connection information
+        struct b_t_conn_info info;
+        // char array to hold bt address
+        char addr[BT_ADDR_LE_STR_LEN];
+        // check if connection information is valid
+        else if (bt_conn_get_info(conn, &info)) { printk("Could not parse connection info\n"); }
+        // display updated parameter information
+        else {
+                bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));   // need destination, address, and size of address
+
+                printk("Connection parameters updated!  \n\
+                Connected to: %s                        \n\
+                New connection interval: %u             \n\
+                New peripheral latency: %u              \n\
+                New connection supervisory timeout: %u  \n"
+                , addr, info.le.interval, info.le.legacy, info.le.timeout);
         }
 }
 

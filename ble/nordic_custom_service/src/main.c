@@ -23,8 +23,8 @@
 
 
 /* definitions */
-#define DEVICE_NAME             CONFIG_BT_DEVICE_NAME           // device name set in proj.conf
-#define DEVICE_NAME_LEN         (sizeof(DEVICE_NAME) - 1)       
+#define DEVICE_NAME             CONFIG_BT_DEVICE_NAME           // device name set in proj.conf.
+#define DEVICE_NAME_LEN         (sizeof(DEVICE_NAME) - 1)       // the length of the device name.
 
 /* initialize a semaphore (ble_init_ok) with initial value 0 and max value 1.
  * forced mutex; value is 1 if resource is free, 0 otherwise

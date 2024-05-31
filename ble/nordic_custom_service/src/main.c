@@ -37,7 +37,7 @@ struct bt_conn *my_connection;
 /* check if the connection is valid. */
 static void connected(struct bt_conn *conn, uint8_t err) {      // changed from u8_t (incompatiblity)
         // structure to hold connection information
-        struct b_t_conn_info info;
+        struct bt_conn_info info;
         // char array to hold bt address
         char addr[BT_ADDR_LE_STR_LEN];
         // check if connection failed
@@ -75,11 +75,11 @@ static bool le_param_req(struct bt_conn *conn, struct bt_le_conn_param param) {
 /* update connection parameters. */
 static void le_param_updated(struct bt_conn *conn, uint16_t interval, uint16_t latency, uint16_t timeout) {
         // structure to hold connection information
-        struct b_t_conn_info info;
+        struct bt_conn_info info;
         // char array to hold bt address
         char addr[BT_ADDR_LE_STR_LEN];
         // check if connection information is valid
-        else if (bt_conn_get_info(conn, &info)) { printk("Could not parse connection info\n"); }
+        if (bt_conn_get_info(conn, &info)) { printk("Could not parse connection info\n"); }
         // display updated parameter information
         else {
                 bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));   // need destination, address, and size of address
@@ -89,7 +89,7 @@ static void le_param_updated(struct bt_conn *conn, uint16_t interval, uint16_t l
                 New connection interval: %u             \n\
                 New peripheral latency: %u              \n\
                 New connection supervisory timeout: %u  \n"
-                , addr, info.le.interval, info.le.legacy, info.le.timeout);
+                , addr, info.le.interval, info.le.latency, info.le.timeout);
         }
 }
 
@@ -98,7 +98,7 @@ static struct bt_conn_cb conn_callbacks = {
         .connected              = connected,
         .disconnected           = disconnected,
         .le_param_req           = le_param_req,
-        .le_param_pdated        = le_param_updated
+        .le_param_updated        = le_param_updated
 };
 
 /* a callback that contains code we run after the bluetooth host is enabled. */
@@ -129,6 +129,7 @@ static void error(void) {
 
 /* < TODO: add function description here > */
 int main(void) {
+        int err = 0;
         // enable the bluetooth host stack
         err = bt_enable(bt_ready);    
 

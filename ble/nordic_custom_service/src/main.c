@@ -2,15 +2,16 @@
 /* main.c */
 
 // note: needed to edit some paths in order to work with newest version of zephyr
-#include <zephyr/kernel.h>
-#include <zephyr/types.h>
+#include <stdint.h>
 #include <stddef.h>
 #include <string.h>
 #include <errno.h>
+
+#include <soc.h>
+#include <zephyr/kernel.h>
+#include <zephyr/types.h>
 #include <zephyr/sys/printk.h>
 #include <zephyr/sys/byteorder.h>
-#include <zephyr/drivers/gpio.h>
-#include <soc.h>
 
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/hci.h>
@@ -34,7 +35,7 @@ static K_SEM_DEFINE(ble_init_ok, 0, 1);
 struct bt_conn *my_connection;
 
 /* check if the connection is valid. */
-static void connected(struct bt_conn *conn, u8_t err) {
+static void connected(struct bt_conn *conn, uint8_t err) {      // changed from u8_t (incompatiblity)
         // structure to hold connection information
         struct b_t_conn_info info;
         // char array to hold bt address
@@ -60,7 +61,7 @@ static void connected(struct bt_conn *conn, u8_t err) {
 /* reset the connection pointer once disconnected. 
  * returns true if parameters are acceptable, and returns false otherwise.
 */
-static void disconnected(struct bt_conn *conn, u8_t reason) {
+static void disconnected(struct bt_conn *conn, uint8_t reason) {
         printk("Disconnected (reason %u)\n", reason);
         my_connection = NULL;
 }
@@ -72,7 +73,7 @@ static bool le_param_req(struct bt_conn *conn, struct bt_le_conn_param param) {
 }
 
 /* update connection parameters. */
-static void le_param_updated(struct bt_conn *conn, u16_t interval, u16_t latency, u16_t timeout) {
+static void le_param_updated(struct bt_conn *conn, uint16_t interval, uint16_t latency, uint16_t timeout) {
         // structure to hold connection information
         struct b_t_conn_info info;
         // char array to hold bt address

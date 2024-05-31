@@ -8,7 +8,7 @@
 #include <string.h>
 #include <errno.h>
 #include <zephyr/sys/printk.h>
-#include <zephyr/sys/printk.h>
+#include <zephyr/sys/byteorder.h>
 #include <zephyr/drivers/gpio.h>
 #include <soc.h>
 
@@ -28,28 +28,7 @@
 /* initialize a semaphore (ble_init_ok) with initial value 0 and max value 1.
  * forced mutex; value is 1 if resource is free, 0 otherwise
 */
-static K_SEM_DEFINE(ble_init_ok, 0, 1)
-
-/* raise an error and sleep the thread indefinitely. */
-static void error(void) {
-        while (true) {
-                printk("Error!\n");     // note: can log this to console instead
-                // spin indefinitely
-                k_sleep(K_MSEC(1000));  // 1000ms timeout
-        }
-}
-
-/* a callback that contains code we run after the bluetooth host is enabled. */
-static void bt_ready(int err) {
-        if (err) {
-                printk("BLE init failed with error code %d\n", err);
-                return;
-        }
-        // give a semaphore to increment its count
-        k_sem_give(&ble_init_ok);
-        // configure connection callbacks
-        bt_conn_cb_register(&conn_callbacks);
-}
+static K_SEM_DEFINE(ble_init_ok, 0, 1);
 
 /* our bt_conn (bluetooth connection) pointer. */
 struct bt_conn *my_connection;
@@ -86,6 +65,7 @@ static void disconnected(struct bt_conn *conn, u8_t reason) {
         my_connection = NULL;
 }
 
+
 /* check that the supplied parameters are valid. */
 static bool le_param_req(struct bt_conn *conn, struct bt_le_conn_param param) {
         return true;
@@ -119,6 +99,31 @@ static struct bt_conn_cb conn_callbacks = {
         .le_param_req           = le_param_req,
         .le_param_pdated        = le_param_updated
 };
+
+/* a callback that contains code we run after the bluetooth host is enabled. */
+static void bt_ready(int err) {
+        if (err) {
+                printk("BLE init failed with error code %d\n", err);
+                return;
+        }
+        // give a semaphore to increment its count
+        k_sem_give(&ble_init_ok);
+        // configure connection callbacks
+        bt_conn_cb_register(&conn_callbacks);
+}
+
+/* raise an error and sleep the thread indefinitely. */
+static void error(void) {
+        while (true) {
+                printk("Error!\n");     // note: can log this to console instead
+                // spin indefinitely
+                k_sleep(K_MSEC(1000));  // 1000ms timeout
+        }
+}
+
+
+
+
 
 
 /* < TODO: add function description here > */

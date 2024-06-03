@@ -168,11 +168,42 @@ static void error(void) {
 
 
 
-/* < TODO: add function description here > */
+/* main function, initialize BLE */
 int main(void) {
+        // init error code and pulse
         int err = 0;
+        uint32_t number = 0;
+        printk("Starting Nordic BLE peripheral tutorial\n");
         // enable the bluetooth host stack
         err = bt_enable(bt_ready);   
+        // raise error
+        if (err) {
+                printk("BLE initialization failed\n");
+                error();
+        }
+
+	/* Bluetooth stack should be ready in less than 100 msec.
+	 * We use this semaphore to wait for bt_enable to call bt_ready before we proceed
+	 * to the main loop. By using the semaphore to block execution we allow the RTOS to 
+	 * execute other tasks while we wait. 
+        */
+       
+        // give a semaphore to increment its count
+        err = k_sem_take(&ble_init_ok, K_MSEC(500));
+        // raise error
+        if (!err) { printk("Bluetooth initialized\n"); }
+        else {
+                printk("BLE initialization did not complete in time\n");
+                error();        // catch error with defined method
+        }
+        // initialize services
+        err = my_service_init();
+        // main loop to send an incrementing number (pulse) every 2000ms
+        for (;;) {
+                my_service_send(my_connection, (uint8_t *)&number, sizeof(number));     // send the number via connection
+                number++;                                                               // increment the number
+                k_sleep(K_MSEC(1000));                                                  // 1000 ms
+        }
 
         return 0;
 }

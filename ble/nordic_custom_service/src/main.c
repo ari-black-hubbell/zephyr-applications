@@ -111,6 +111,8 @@ static void bt_ready(int err) {
         k_sem_give(&ble_init_ok);
         // configure connection callbacks
         bt_conn_cb_register(&conn_callbacks);
+        // initlaize service 
+        err = my_service_init();
 }
 
 /* raise an error and sleep the thread indefinitely. */
@@ -131,11 +133,7 @@ static void error(void) {
 int main(void) {
         int err = 0;
         // enable the bluetooth host stack
-        err = bt_enable(bt_ready);    
-
-
-
-
+        err = bt_enable(bt_ready);   
 
         return 0;
 }

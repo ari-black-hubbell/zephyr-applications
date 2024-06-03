@@ -109,3 +109,28 @@ void on_cccd_changed(const struct bt_gatt_attr *attr, uint16_t value) {
             printk("Error, CCCD has been set to an invalid value");
     }
 }
+
+/* function for sending notifications to a client with the provided data, given that the 
+ * Client Characteristic Control Descriptor has been set to notify (0x1).
+ * calls on_sent() callback if successful.
+*/
+void my_service_send(struct bt_conn *conn, const uint8_t *data, uint16_t len) {
+    /* attribute table: 0 = service, 1 = primary service, 2 = RX, 3 = TX, 4 = CCC. */
+    // define attribute structure
+    const struct bt_gatt_attr *attr = &my_service.attrs[3];
+    // define params structure
+    struct bt_gatt_notify_params params = {
+        .uuid   = BT_UUID_MY_SERVICE_TX,
+        .attr   = attr,
+        .data   = data,
+        .len    = len,
+        .func   = on_sent
+    };
+    // check if notifications are enabled
+    if (bt_gatt_is_subscribed(conn, attr, BT_GATT_CCC_NOTIFY)) {
+        // send the notification
+        if (bt_gatt_notify_cb(conn, &params)) { printk("Error, unable to send notification\n"); }
+    }
+    // else display a warning
+    else { printk("Warning, notification not enabled on the selected attribute\n"); }
+}

@@ -87,6 +87,25 @@ static void on_sent(struct *conn, void *user_data) {
                                                                         addr->a.val[3],
                                                                         addr->a.val[4],
                                                                         addr->a.val[5]);
+}
 
-
+/* function called whenever the client changes the CCCD register. */
+void on_cccd_changed(const struct bt_gatt_attr *attr, uint16_t value) {
+    ARG_UNUSED(attr);
+    switch(value) {
+        // if notify
+        case BT_GATT_CCC_NOTIFY:
+            // start sending stuff
+            break;
+        // if indicate
+        case BT_GATT_CCC_INDICATE:
+            // start sending stuff via indications
+            break;
+        // if 0 / exit
+        case 0;
+            // stop sending stuff
+        // otherwise
+        default:
+            printk("Error, CCCD has been set to an invalid value");
+    }
 }

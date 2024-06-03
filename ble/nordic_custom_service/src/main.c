@@ -101,18 +101,57 @@ static struct bt_conn_cb conn_callbacks = {
         .le_param_updated        = le_param_updated
 };
 
+/* advertisement data structure */
+static const struct bt_data ad[] = {
+        // set advertising flags
+        BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),   // advertise indefinitely | don't support BT classic
+        // define device name
+        BT_DATA(BT_DATA_NAME_COMPLETE, DEVICE_NAME, DEVICE_NAME_LEN),           // name in config file
+};
+
+/* scan response data structure */
+static const struct bt_data sd[] = {
+        // send service UUID
+        BT_DATA_BYTES(BT_DATA_UUID16_ALL, MY_SERVICE_UUID)
+};
+
 /* a callback that contains code we run after the bluetooth host is enabled. */
 static void bt_ready(int err) {
         if (err) {
                 printk("BLE init failed with error code %d\n", err);
                 return;
         }
-        // give a semaphore to increment its count
-        k_sem_give(&ble_init_ok);
         // configure connection callbacks
         bt_conn_cb_register(&conn_callbacks);
-        // initlaize service 
+        // initialize services 
         err = my_service_init();
+        // raise error
+        if (err) { 
+                printk("Failed to init LBS (err:%d)\n", err);
+                return;
+        }
+        // start advertising
+        err = bt_le_adv_start(BT_LE_ADV_PARAM(
+                                        BT_LE_ADV_OPT_CONNECTABLE       // options (connectable)
+                                        | BT_LE_ADV_OPT_ONE_TIME        // options (advertise once)
+                                        | BT_LE_ADV_OPT_USE_NAME,       // options (use GAP device name)
+                                        160,                            // min advertising interval (units of 0.625 ms)
+                                        1600),                          // max advertising interval(units of 0.625 ms)
+                                ad, ARRAY_SIZE(ad),     // ad (data in ad packets) and size
+                                sd, ARRAY_SIZE(sd));    // sd (data in scan response packets) and size
+        
+        // raise error
+        if (err) {
+                printk("Advertising failed to start (err%d)\n", err);
+                return;
+        }
+        // display success message
+        printk("Advertising successfully started\n", err);
+
+        // give a semaphore to increment its count
+        k_sem_give(&ble_init_ok);
+
+
 }
 
 /* raise an error and sleep the thread indefinitely. */

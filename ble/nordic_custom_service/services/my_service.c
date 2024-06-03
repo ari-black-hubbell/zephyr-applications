@@ -27,23 +27,6 @@
 #define BT_UUID_MY_SERVICE_TX   BT_UUID_DECLARE_128(TX_CHARACTERISTIC_UUID)     // the transmission characteristic custom UUID.
 #define BT_UUID_MY_SERVICE_RX   BT_UUID_DECLARE_128(RX_CHARACTERISTIC_UUID)     // the receiving characteristic custom UUID.
 
-/* helper macro to statically register the service in the host stack. 
- * LED button service declaration and registration.
-*/
-BT_GATT_SERVICE_DEFINE(my_service,                                          // name
-BT_GATT_PRIMARY_SERVICE(BT_UUID_MY_SERVICE),                                // primary service UUID (service ID)
-BT_GATT_CHARACTERISTIC(BT_UUID_MY_SERVICE_RX,                               // characteristic UUID (receiving)   
-                    BT_GATT_CHRC_WRITE | BT_GATT_CHRC_WRITE_WITHOUT_RESP,   // properties (value is writable with/without response) 
-                    BT_GATT_PERM_READ | BT_GATT_PERM_WRITE,                 // permissions (value can be read / written to)
-                    NULL, on_receive, NULL),                                // callbacks (read, write, user data)
-BT_GATT_CHARACTERISTIC(BT_UUID_MY_SERVICE_TX,       // characteritic UUID (transmitting)
-                    BT_GATT_CHRC_NOTIFY,            // properties (permits notifications on value change without acknowledgement)
-                    BT_GATT_PERM_READ,              // permissions (value can be read)
-                    NULL, NULL, NULL),              // callbacks (read, write, user data)
-BT_GATT_CCC(lbslc_ccc_cfg_changed,                  // client characteristic configuration (when config changed)
-        BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),    // hold information about read/write permissions
-);
-
 /* transmission buffer definitions */
 uint8_t data_tx[MAX_TRANSMIT_SIZE];     // trasmission buffer (for transmitting).
 uint8_t data_rx[MAX_TRANSMIT_SIZE];     // trasmission buffer (for receiving).
@@ -72,13 +55,13 @@ static ssize_t on_receive(struct bt_conn *conn,
                     printk("Received data, handle %d, conn %p, data 0x", attr->handle, conn);
                     for(uint8_t i = 0; i < len; i++) { printk("%02X", buffer[i]);}              // iterate through buffer, print all data
                     printk("\n");
-                    retrn len;
+                    return len;
                 }
 
 /* function called whenever a notification is sent by the TX characteristic. 
  * outputs the address of the recipient.
 */
-static void on_sent(struct *conn, void *user_data) {
+static void on_sent(struct bt_conn *conn, void *user_data) {
     ARG_UNUSED(user_data);
     const bt_addr_le_t * addr = bt_conn_get_dst(conn);                                  // get address/destination of the connection endpoint
     printk("Data sent to Address 0x %02X %02X %02X %02X %02X %02X \n", addr->a.val[0],  // display the address
@@ -102,13 +85,31 @@ void on_cccd_changed(const struct bt_gatt_attr *attr, uint16_t value) {
             // start sending stuff via indications
             break;
         // if 0 / exit
-        case 0;
+        case 0:
             // stop sending stuff
+            break;
         // otherwise
         default:
             printk("Error, CCCD has been set to an invalid value");
     }
 }
+
+/* helper macro to statically register the service in the host stack. 
+ * LED button service declaration and registration.
+*/
+BT_GATT_SERVICE_DEFINE(my_service,                                          // name
+BT_GATT_PRIMARY_SERVICE(BT_UUID_MY_SERVICE),                                // primary service UUID (service ID)
+BT_GATT_CHARACTERISTIC(BT_UUID_MY_SERVICE_RX,                               // characteristic UUID (receiving)   
+                    BT_GATT_CHRC_WRITE | BT_GATT_CHRC_WRITE_WITHOUT_RESP,   // properties (value is writable with/without response) 
+                    BT_GATT_PERM_READ | BT_GATT_PERM_WRITE,                 // permissions (value can be read / written to)
+                    NULL, on_receive, NULL),                                // callbacks (read, write, user data)
+BT_GATT_CHARACTERISTIC(BT_UUID_MY_SERVICE_TX,       // characteritic UUID (transmitting)
+                    BT_GATT_CHRC_NOTIFY,            // properties (permits notifications on value change without acknowledgement)
+                    BT_GATT_PERM_READ,              // permissions (value can be read)
+                    NULL, NULL, NULL),              // callbacks (read, write, user data)
+BT_GATT_CCC(on_cccd_changed,                  // client characteristic configuration (when config changed)
+        BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),    // hold information about read/write permissions
+);
 
 /* function for sending notifications to a client with the provided data, given that the 
  * Client Characteristic Control Descriptor has been set to notify (0x1).

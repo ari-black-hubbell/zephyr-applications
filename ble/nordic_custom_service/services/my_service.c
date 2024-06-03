@@ -57,6 +57,36 @@ int my_service_init(void) {
     memset(&data_tx, 0, MAX_TRANSMIT_SIZE);
     // return output value
     return err;
+}
+
+/* function called whenever RX characteristic is written to by a client. 
+ * unpacks and outputs received data.
+*/
+static ssize_t on_receive(struct bt_conn *conn,
+                const struct bt_gatt_attr *attr,
+                const void *buf,
+                uint16_t len,
+                uint16_t offset,
+                uint8_t flags) {
+                    const uint8_t * buffer = buf;
+                    printk("Received data, handle %d, conn %p, data 0x", attr->handle, conn);
+                    for(uint8_t i = 0; i < len; i++) { printk("%02X", buffer[i]);}              // iterate through buffer, print all data
+                    printk("\n");
+                    retrn len;
+                }
+
+/* function called whenever a notification is sent by the TX characteristic. 
+ * outputs the address of the recipient.
+*/
+static void on_sent(struct *conn, void *user_data) {
+    ARG_UNUSED(user_data);
+    const bt_addr_le_t * addr = bt_conn_get_dst(conn);                                  // get address/destination of the connection endpoint
+    printk("Data sent to Address 0x %02X %02X %02X %02X %02X %02X \n", addr->a.val[0],  // display the address
+                                                                        addr->a.val[1],
+                                                                        addr->a.val[2],
+                                                                        addr->a.val[3],
+                                                                        addr->a.val[4],
+                                                                        addr->a.val[5]);
 
 
 }

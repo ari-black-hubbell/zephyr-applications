@@ -68,7 +68,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason) {
 
 
 /* check that the supplied parameters are valid. */
-static bool le_param_req(struct bt_conn *conn, struct bt_le_conn_param param) {
+static bool le_param_req(struct bt_conn *conn, struct bt_le_conn_param *param) {
         return true;
 }
 
@@ -98,7 +98,7 @@ static struct bt_conn_cb conn_callbacks = {
         .connected              = connected,
         .disconnected           = disconnected,
         .le_param_req           = le_param_req,
-        .le_param_updated        = le_param_updated
+        .le_param_updated       = le_param_updated
 };
 
 /* advertisement data structure */
@@ -131,14 +131,16 @@ static void bt_ready(int err) {
                 return;
         }
         // start advertising
-        err = bt_le_adv_start(BT_LE_ADV_PARAM(
-                                        BT_LE_ADV_OPT_CONNECTABLE       // options (connectable)
-                                        | BT_LE_ADV_OPT_ONE_TIME        // options (advertise once)
-                                        | BT_LE_ADV_OPT_USE_NAME,       // options (use GAP device name)
-                                        160,                            // min advertising interval (units of 0.625 ms)
-                                        1600),                          // max advertising interval(units of 0.625 ms)
-                                ad, ARRAY_SIZE(ad),     // ad (data in ad packets) and size
-                                sd, ARRAY_SIZE(sd));    // sd (data in scan response packets) and size
+        // err = bt_le_adv_start(BT_LE_ADV_PARAM(
+        //                                 BT_LE_ADV_OPT_CONNECTABLE       // options (connectable)
+        //                                 | BT_LE_ADV_OPT_ONE_TIME        // options (advertise once)
+        //                                 | BT_LE_ADV_OPT_USE_NAME,       // options (use GAP device name)
+        //                                 160,                            // min advertising interval (units of 0.625 ms)
+        //                                 1600),                          // max advertising interval(units of 0.625 ms)
+        //                         ad, ARRAY_SIZE(ad),     // ad (data in ad packets) and size
+        //                         sd, ARRAY_SIZE(sd));    // sd (data in scan response packets) and size
+	err = bt_le_adv_start(BT_LE_ADV_CONN, ad, ARRAY_SIZE(ad),
+			      sd, ARRAY_SIZE(sd));
         
         // raise error
         if (err) {
@@ -146,7 +148,7 @@ static void bt_ready(int err) {
                 return;
         }
         // display success message
-        printk("Advertising successfully started\n", err);
+        printk("Advertising successfully started\n");
 
         // give a semaphore to increment its count
         k_sem_give(&ble_init_ok);

@@ -205,6 +205,7 @@ int main(void) {
                 my_service_send(my_connection, (uint8_t *)&number, sizeof(number));     // send the number via connection
                 number++;                                                               // increment the number
                 k_sleep(K_MSEC(1000));                                                  // 1000 ms
+
         }
 
         return 0;

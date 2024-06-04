@@ -79,14 +79,17 @@ void on_cccd_changed(const struct bt_gatt_attr *attr, uint16_t value) {
         // if notify
         case BT_GATT_CCC_NOTIFY:
             // start sending stuff
+            printk("Enabling notifications\n");
             break;
         // if indicate
         case BT_GATT_CCC_INDICATE:
             // start sending stuff via indications
+            printk("Enabling indications\n");
             break;
         // if 0 / exit
         case 0:
             // stop sending stuff
+            printk("Disabling notifications and indications\n");
             break;
         // otherwise
         default:
@@ -98,17 +101,17 @@ void on_cccd_changed(const struct bt_gatt_attr *attr, uint16_t value) {
  * LED button service declaration and registration.
 */
 BT_GATT_SERVICE_DEFINE(my_service,                                          // name
-BT_GATT_PRIMARY_SERVICE(BT_UUID_MY_SERVICE),                                // primary service UUID (service ID)
-BT_GATT_CHARACTERISTIC(BT_UUID_MY_SERVICE_RX,                               // characteristic UUID (receiving)   
-                    BT_GATT_CHRC_WRITE | BT_GATT_CHRC_WRITE_WITHOUT_RESP,   // properties (value is writable with/without response) 
-                    BT_GATT_PERM_READ | BT_GATT_PERM_WRITE,                 // permissions (value can be read / written to)
-                    NULL, on_receive, NULL),                                // callbacks (read, write, user data)
-BT_GATT_CHARACTERISTIC(BT_UUID_MY_SERVICE_TX,       // characteritic UUID (transmitting)
-                    BT_GATT_CHRC_NOTIFY,            // properties (permits notifications on value change without acknowledgement)
-                    BT_GATT_PERM_READ,              // permissions (value can be read)
-                    NULL, NULL, NULL),              // callbacks (read, write, user data)
-BT_GATT_CCC(on_cccd_changed,                  // client characteristic configuration (when config changed)
-        BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),    // hold information about read/write permissions
+    BT_GATT_PRIMARY_SERVICE(BT_UUID_MY_SERVICE),                                // primary service UUID (service ID)
+    BT_GATT_CHARACTERISTIC(BT_UUID_MY_SERVICE_RX,                               // characteristic UUID (receiving)   
+                        BT_GATT_CHRC_WRITE | BT_GATT_CHRC_WRITE_WITHOUT_RESP,   // properties (value is writable with/without response) 
+                        BT_GATT_PERM_READ | BT_GATT_PERM_WRITE,                 // permissions (value can be read / written to)
+                        NULL, on_receive, NULL),                                // callbacks (read, write, user data)
+    BT_GATT_CHARACTERISTIC(BT_UUID_MY_SERVICE_TX,                   // characteritic UUID (transmitting)
+                        BT_GATT_CHRC_NOTIFY,    // properties (permits notifications on value change without acknowledgement)
+                        BT_GATT_PERM_READ,                          // permissions (value can be read)
+                        NULL, NULL, NULL),                          // callbacks (read, write, user data)
+    BT_GATT_CCC(on_cccd_changed,                        // client characteristic configuration (when config changed)
+            BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),    // hold information about read/write permissions
 );
 
 /* function for sending notifications to a client with the provided data, given that the 
@@ -116,9 +119,13 @@ BT_GATT_CCC(on_cccd_changed,                  // client characteristic configura
  * calls on_sent() callback if successful.
 */
 void my_service_send(struct bt_conn *conn, const uint8_t *data, uint16_t len) {
-    /* attribute table: 0 = service, 1 = primary service, 2 = RX, 3 = TX, 4 = CCC. */
+    /* attribute table: 0 = primary service, 1 = RX properties, 2 = RX descriptor, 
+     * 3 = TX properties, 4 = TX descriptor, 5 = CCC. 
+     */
     // define attribute structure
     const struct bt_gatt_attr *attr = &my_service.attrs[3];
+    // printk("handle, user data %d, %p\n", attr->handle, attr->user_data);
+    // printk("ccc: %p\n", &my_service.attrs[5]);
     // define params structure
     struct bt_gatt_notify_params params = {
         .uuid   = BT_UUID_MY_SERVICE_TX,
@@ -128,10 +135,11 @@ void my_service_send(struct bt_conn *conn, const uint8_t *data, uint16_t len) {
         .func   = on_sent
     };
     // check if notifications are enabled
-    if (bt_gatt_is_subscribed(conn, attr, BT_GATT_CCC_NOTIFY)) {
+    // if (bt_gatt_is_subscribed(conn, attr, BT_GATT_CCC_NOTIFY)) {         // always evaluates to FALSE
         // send the notification
         if (bt_gatt_notify_cb(conn, &params)) { printk("Error, unable to send notification\n"); }
-    }
+    // }
     // else display a warning
-    else { printk("Warning, notification not enabled on the selected attribute\n"); }
+    // else { printk("Warning, notification not enabled on the selected attribute\n"); }
+    
 }

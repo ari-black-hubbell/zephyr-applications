@@ -18,12 +18,6 @@
 #include <zephyr/bluetooth/uuid.h>
 #include <zephyr/bluetooth/gatt.h>
 
-/* declaration: initialization function to call from main. */
-int my_service_init(void);
-
-/* declaration: function for sending notifications to a client. */
-void my_service_send(struct bt_conn *conn, const uint8_t *data, uint16_t len);
-
 /* randomized service UUID: 5efcd59b-9108-4b83-b7b5-a495 3cd9a0e1. 
  * note: UUIDs need to have LSB ordering.
 */
@@ -37,4 +31,21 @@ void my_service_send(struct bt_conn *conn, const uint8_t *data, uint16_t len);
 /* RX characteristic UUID: d3d5557e-9bdb-4c03-8b3e-6fc0 663bf291. */
 #define RX_CHARACTERISTIC_UUID 0x91, 0xf2, 0x3b, 0x66, 0xc0, 0x6f, 0x3e, \
                     0x8b, 0x03, 0x4c, 0xdb, 0x9b, 0x7e, 0x55, 0xd5, 0xd3
+
+
+/** @brief Callback type for when new data is received. */
+typedef void (*data_rx_cb_t)(uint8_t *data, uint8_t length);
+
+/** @brief Callback struct used by the my_service Service. */
+struct my_service_cb 
+{
+    /** Data received callback. */
+    data_rx_cb_t    data_rx_cb;
+};
+
+/* declaration: initialization function to call from main. */
+int my_service_init(void);
+
+/* declaration: function for sending notifications to a client. */
+void my_service_send(struct bt_conn *conn, const uint8_t *data, uint16_t len);
 

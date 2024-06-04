@@ -53,7 +53,7 @@ static void connected(struct bt_conn *conn, uint8_t err) {      // changed from 
                 Role: %u                                \n\
                 Connection interval: %u                 \n\
                 Peripheral latency: %u                  \n\
-                Connection supervisory timeout: %u      \n"     // note: used term "peripheral" instead of "slave" (...)
+                Connection supervisory timeout: %u      \n"                     // note: used term "peripheral" instead of "slave" (...)
                 , addr, info.role, info.le.interval, info.le.latency, info.le.timeout);
         }
 }
@@ -131,17 +131,8 @@ static void bt_ready(int err) {
                 return;
         }
         // start advertising
-        // err = bt_le_adv_start(BT_LE_ADV_PARAM(
-        //                                 BT_LE_ADV_OPT_CONNECTABLE       // options (connectable)
-        //                                 | BT_LE_ADV_OPT_ONE_TIME        // options (advertise once)
-        //                                 | BT_LE_ADV_OPT_USE_NAME,       // options (use GAP device name)
-        //                                 160,                            // min advertising interval (units of 0.625 ms)
-        //                                 1600),                          // max advertising interval(units of 0.625 ms)
-        //                         ad, ARRAY_SIZE(ad),     // ad (data in ad packets) and size
-        //                         sd, ARRAY_SIZE(sd));    // sd (data in scan response packets) and size
 	err = bt_le_adv_start(BT_LE_ADV_CONN, ad, ARRAY_SIZE(ad),
 			      sd, ARRAY_SIZE(sd));
-        
         // raise error
         if (err) {
                 printk("Advertising failed to start (err%d)\n", err);
@@ -149,11 +140,8 @@ static void bt_ready(int err) {
         }
         // display success message
         printk("Advertising successfully started\n");
-
         // give a semaphore to increment its count
         k_sem_give(&ble_init_ok);
-
-
 }
 
 /* raise an error and sleep the thread indefinitely. */
@@ -164,11 +152,6 @@ static void error(void) {
                 k_sleep(K_MSEC(1000));  // 1000ms timeout
         }
 }
-
-
-
-
-
 
 /* main function, initialize BLE */
 int main(void) {

@@ -1,6 +1,13 @@
 {
     "files.associations": {
         "bluetooth.h": "c",
-        "zephyr.h": "c"
+        "zephyr.h": "c",
+        "printk.h": "c",
+        "conn.h": "c",
+        "errno.h": "c",
+        "my_service.h": "c",
+        "string.h": "c",
+        "byteorder.h": "c",
+        "uuid.h": "c"
     }
 }

@@ -100,16 +100,16 @@ void on_cccd_changed(const struct bt_gatt_attr *attr, uint16_t value) {
 /* helper macro to statically register the service in the host stack. 
  * LED button service declaration and registration.
 */
-BT_GATT_SERVICE_DEFINE(my_service,                                          // name
+BT_GATT_SERVICE_DEFINE(my_service,                                              // name
     BT_GATT_PRIMARY_SERVICE(BT_UUID_MY_SERVICE),                                // primary service UUID (service ID)
     BT_GATT_CHARACTERISTIC(BT_UUID_MY_SERVICE_RX,                               // characteristic UUID (receiving)   
                         BT_GATT_CHRC_WRITE | BT_GATT_CHRC_WRITE_WITHOUT_RESP,   // properties (value is writable with/without response) 
                         BT_GATT_PERM_READ | BT_GATT_PERM_WRITE,                 // permissions (value can be read / written to)
                         NULL, on_receive, NULL),                                // callbacks (read, write, user data)
-    BT_GATT_CHARACTERISTIC(BT_UUID_MY_SERVICE_TX,                   // characteritic UUID (transmitting)
-                        BT_GATT_CHRC_NOTIFY,    // properties (permits notifications on value change without acknowledgement)
-                        BT_GATT_PERM_READ,                          // permissions (value can be read)
-                        NULL, NULL, NULL),                          // callbacks (read, write, user data)
+    BT_GATT_CHARACTERISTIC(BT_UUID_MY_SERVICE_TX,       // characteritic UUID (transmitting)
+                        BT_GATT_CHRC_NOTIFY,            // properties (permits notifications on value change without acknowledgement)
+                        BT_GATT_PERM_READ,              // permissions (value can be read)
+                        NULL, NULL, NULL),              // callbacks (read, write, user data)
     BT_GATT_CCC(on_cccd_changed,                        // client characteristic configuration (when config changed)
             BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),    // hold information about read/write permissions
 );

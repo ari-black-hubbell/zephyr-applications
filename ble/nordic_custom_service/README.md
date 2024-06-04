@@ -2,7 +2,7 @@
 # nordic_custom_service
 
 ## Description
-Implementation of a custom BLE service with two custom characteristics.
+Implementation of a custom BLE service with two custom characteristics, adapted from [here](https://devzone.nordicsemi.com/guides/nrf-connect-sdk-guides/b/getting-started/posts/ncs-ble-tutorial-part-1-custom-service-in-peripheral-role).
 
 Development and testing performed on an nRF52840-DK using the LightBlue and nRF Connect mobile applications to connect a client device to the peripheral.
 

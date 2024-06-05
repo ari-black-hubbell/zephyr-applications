@@ -124,8 +124,6 @@ void my_service_send(struct bt_conn *conn, const uint8_t *data, uint16_t len) {
      */
     // define attribute structure
     const struct bt_gatt_attr *attr = &my_service.attrs[3];
-    // printk("handle, user data %d, %p\n", attr->handle, attr->user_data);
-    // printk("ccc: %p\n", &my_service.attrs[5]);
     // define params structure
     struct bt_gatt_notify_params params = {
         .uuid   = BT_UUID_MY_SERVICE_TX,
@@ -134,10 +132,13 @@ void my_service_send(struct bt_conn *conn, const uint8_t *data, uint16_t len) {
         .len    = len,
         .func   = on_sent
     };
+
     // check if notifications are enabled
-    // if (bt_gatt_is_subscribed(conn, attr, BT_GATT_CCC_NOTIFY)) {         // always evaluates to FALSE
+    // if (bt_gatt_is_subscribed(conn, attr, BT_GATT_CCC_NOTIFY)) {     // always evaluates to FALSE, either (my) dev bug or Zephyr bug
+
         // send the notification
         if (bt_gatt_notify_cb(conn, &params)) { printk("Error, unable to send notification\n"); }
+        
     // }
     // else display a warning
     // else { printk("Warning, notification not enabled on the selected attribute\n"); }

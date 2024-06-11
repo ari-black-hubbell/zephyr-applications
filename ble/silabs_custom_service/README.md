@@ -2,7 +2,7 @@
 # silabs_custom_service
 
 ## Description
-Implementation of a custom BLE service with two custom characteristics, adapted from the Nordic custom service project within the same parent directory. Note that the modifications to port the code from the Nordic board to the Silabs board was very minimal (including only an optional name change and updated bash scripts), indicating that little to no work must be done to adapt code for a custom BLE service to fit a Zephyr-supported board developed by Silicon Labs, despite its general lack of compatability with the RTOS overall.
+Implementation of a custom BLE service with two custom characteristics, adapted from the Nordic custom service project within the same parent directory. Note that the modifications to port the code from the Nordic board to the Silabs board were very minimal (including only an optional name change and updated bash scripts), indicating that little to no work must be done to adapt code for a custom BLE service to fit a Zephyr-supported board developed by Silicon Labs, despite its general lack of compatability with the RTOS overall.
 
 Development and testing performed on an EFR32xG24B + 20 dBm Pro Kit, xG24-PK6010A. The mainboard was Silabs' BRD4002A, and the radio board was their BRD4187C.
 

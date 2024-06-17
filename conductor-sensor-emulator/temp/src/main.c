@@ -35,13 +35,16 @@ void random_sample(void) {
 /* sample uses of the cryptography capabilities provided by zephyr. */
 void crypto_sample(void) {
 	
-	// define necessary structures
-	struct hash_ctx ctx;		// context structure holds one time parameters
-	const struct device *dev = device_get_binding(CONFIG_CRYPTO_MBEDTLS_SHIM_DRV_NAME); // device struct for driver inst
+	// define context structure
+	struct hash_ctx ctx;					// holds one time parameters
+	// add some flags (crypto.h)
+	int caps = crypto_query_hwcaps(dev);	// query hw supported flags
+	ctx.flags = CAP_SYNC_OPS | CAP_SEPARATE_IO_BUFS; 
+	// define dev structure for driver instance
+	const struct device *dev = device_get_binding(CONFIG_CRYPTO_MBEDTLS_SHIM_DRV_NAME);
 
 	// begin hash session (sha224, 256, 384, 512)
 	int ret = hash_begin_session(dev, &ctx, CRYPTO_HASH_ALGO_SHA256);	// sha256
-	printk("%d \n", ret);
 	if (ret == 0) {printk("initialized sha256 session\n");}
 	else {printk("failed to initialize sha256 session\n");}
 

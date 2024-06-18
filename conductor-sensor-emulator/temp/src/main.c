@@ -33,8 +33,8 @@ void random_sample(void) {
 	  val8, val16, val32, val64);
 }
 
-/* sample uses of the cryptography capabilities provided by zephyr. */
-void crypto_sample(void) {
+/* sample uses of the hash capabilities provided by zephyr. */
+void hash_sample(void) {
 	
 	// define context structure
 	struct hash_ctx ctx;								// holds one time parameters
@@ -68,7 +68,6 @@ void crypto_sample(void) {
 
 	// output hash in hex (has 4 extra characters at the end)
 	char* cur = pkt.out_buf;
-	// prints hex form of hash with 4 extra characters at the end
 	for ( ; *cur != '\0'; ++cur) {printk("%02x", *cur);} printk("\n");
 }
 
@@ -81,9 +80,9 @@ int main(void) {
 	random_sample();
 	printk("------------------------------------------------------------------\n");
 
-	// crypto module
+	// hash module
 	printk("------------------------------------------------------------------\n");
-	crypto_sample();
+	hash_sample();
 	printk("------------------------------------------------------------------\n");
 
 	return 0;

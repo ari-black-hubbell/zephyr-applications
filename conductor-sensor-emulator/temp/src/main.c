@@ -63,12 +63,33 @@ void hash_sample(void) {
 
 	// perform hash function	(may not produce the correct hash?)
 	ret = hash_compute(&ctx, &pkt);
-	if (ret == 0) {printk("successfully computed hash\n", pkt.out_buf);}
+	if (ret == 0) {printk("successfully computed hash\n");}
 	else {printk("failed to compute hash\n");}
 
 	// output hash in hex (has 4 extra characters at the end)
 	char* cur = pkt.out_buf;
 	for ( ; *cur != '\0'; ++cur) {printk("%02x", *cur);} printk("\n");
+}
+
+/* sample uses of the cipher capabilities provided by zephyr. */
+void cipher_sample(void) {
+
+	// define context structure and flags
+	struct cipher_ctx ctx;
+	ctx.flags = CAP_SYNC_OPS | CAP_SEPARATE_IO_BUFS; 
+
+	// define device structure for driver instance
+	const struct device *dev = device_get_binding(CONFIG_CRYPTO_MBEDTLS_SHIM_DRV_NAME);
+
+	// begin session (device, context, algorithm, mode, encrypt/decrypt)
+	int ret = cipher_begin_session(dev, &ctx, CRYPTO_CIPHER_ALGO_AES, CRYPTO_CIPHER_MODE_CCM, CRYPTO_CIPHER_OP_ENCRYPT);
+	if (ret == 0) {printk("initialized AES-CCM session\n");}
+	else {printk("failed to initialize AES-CCM session\n");}
+
+	// NOTE: you can do BT cryptography using bt_ccm_encrypt/decrypt
+	// with zephyr's bt cryptography API
+
+
 }
 
 int main(void) {
@@ -83,6 +104,11 @@ int main(void) {
 	// hash module
 	printk("------------------------------------------------------------------\n");
 	hash_sample();
+	printk("------------------------------------------------------------------\n");
+
+	// cipher sample
+	printk("------------------------------------------------------------------\n");
+	cipher_sample();
 	printk("------------------------------------------------------------------\n");
 
 	return 0;

@@ -1,6 +1,9 @@
 
 /* services.h */
 
+#ifndef SERVICES_H_
+#define SERVICES_H_
+
 /* 
  * UUIDs for Standard BLE Services 
  */
@@ -108,3 +111,5 @@
 
 // OTA Control (OTA): f7bf3564-fb6d-4e53-88a4-5e37e0326063
 #define BT_UUID_OTA_OTAC            BT_UUID_DECLARE_128(0xf7bf3564, 0xfb6d, 0x4e53, 0x88a4, 0x5e37e0326063)
+
+#endif

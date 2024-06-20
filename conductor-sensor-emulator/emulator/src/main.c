@@ -38,7 +38,7 @@ int greet(void) {
 
 }
 
-/* Callback: notify the application of a new connection.
+/* Connection callback: notify the application of a new connection.
  *
  * `struct bt_conn *conn`: The new BT connection object.
  * `uint8_t err`:          HCI error, 0 for success and != 0 otherwise.
@@ -65,7 +65,7 @@ static void connected(struct bt_conn *conn, uint8_t err) {
 
 }
 
-/* Callback: notify the application of a connection termination.
+/* Connection callback: notify the application of a connection termination.
  *
  * `struct bt_conn *conn`: The new BT connection object.
  * `uint8_t reason`:       Reason for disconnect, `BT_HCI_ERR_*`.
@@ -75,7 +75,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason) {
     my_connection = NULL;
 }
 
-/* Callback: notify the application of parameter update request.
+/* Connection callback: notify the application of parameter update request.
  *
  * `struct bt_conn *conn`:           The new BT connection object.
  * `struct be_le_conn_param *param`: The proposed connection parameters.
@@ -87,7 +87,7 @@ static bool le_param_req(struct bt_conn *conn, struct bt_le_conn_param *param) {
     return true;
 }
 
-/* Callback: notify the application that the parameters have been updated.
+/* Connection callback: notify the application that the parameters have been updated.
  *
  * `struct bt_conn *conn`:           The BT connection object.
  * `uint16_t interval`:              The new connection interval.
@@ -135,12 +135,61 @@ static const struct bt_data ad[] = {
 };
 
 /* (2nd) advertisement packet data structure */
-// static const struct bt_data sd[] = {
+static const struct bt_data sd[] = {
     
-//     /* advertise some data */
-//     BT_DATA_BYTES(BT_DATA_UUID16_ALL, &val)  /* the UUID of one of our services. */
+    /* TODO: add data to advertise here; currently it's an empty packet */
 
-// };
+    /* advertise some data */
+    // BT_DATA_BYTES(BT_DATA_UUID16_ALL, &val)  /* the UUID of one of our services. */
+
+};
+
+/* Initialize services.
+ *
+ * Returns: 0 on success, != 0 otherwise.
+ */
+int init_services(void) {
+    
+    int err = 0;    /* return (error) value. */
+
+    /* TODO: add functionality */
+
+    return err;
+
+}
+
+/* BT Callback: start advertising after the bluetooth host stack is enabled.
+ *
+ * `uint8_t err`:          HCI error, 0 for success and != 0 otherwise.
+ */
+static void bt_ready(int err) {
+
+    if (err) { printk("BLE initialization failed with error code %d\n", err); return; }
+
+    /* configure connection callbacks */
+    bt_conn_cb_register(&conn_callbacks);
+
+    /* initialize services */
+    err = init_services();
+    if (err) { printk("Failed to initialize services, error code %d\n", err); return; } 
+
+    /* start advertising */
+    err = bt_le_adv_start(BT_LE_ADV_CONN, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
+    if (err) { printk("Failed to start advertising, error code %d\n", err); return; }
+
+    /* mutex */
+    k_sem_give(&ble_init_ok);   /* increment semaphore count to 1. */
+}
+
+/* BT Callback: raise an error and spin indefinitely.
+ */
+static void error(void) {
+    while (true) {
+        printk("Error!\n");
+        k_sleep(K_MSEC(1000));  /* 1000ms timeout */
+    }
+}
+
 
 
 

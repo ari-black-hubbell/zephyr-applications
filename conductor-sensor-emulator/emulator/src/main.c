@@ -11,6 +11,10 @@
 #include <zephyr/bluetooth/uuid.h>
 #include <zephyr/bluetooth/gatt.h>
 
+#include <zephyr/bluetooth/services/bas.h>
+#include <zephyr/bluetooth/services/dis.h>
+
+
 #include "../services/services.h"
 
 
@@ -138,7 +142,8 @@ static const struct bt_data ad[] = {
 static const struct bt_data sd[] = {
 
     /* advertise some data */
-    BT_DATA_BYTES(BT_DATA_UUID16_ALL, BT_UUID_SI)   /* the UUID of our primary service. */
+    // BT_DATA_BYTES(BT_DATA_UUID16_ALL, BT_UUID_SI)   /* the UUID of our primary service. does it matter what we choose? */   
+    BT_DATA_BYTES(BT_DATA_UUID16_ALL, BT_UUID_16_ENCODE(BT_UUID_DIS_VAL))  
 
 };
 

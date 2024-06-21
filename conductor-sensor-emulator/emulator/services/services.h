@@ -84,7 +84,7 @@
 #define BT_UUID_WLS     BT_UUID_128_ENCODE(0x92467915, 0x954e, 0x7f30, 0xf090, 0x95a3f05a54b1)
 
 /* OTA: 1d14d6ee-fd63-4fa1-bfa4-8f47b42119f0 */
-#define BT_UUID_OTA     BT_UUID_128_ENCODE(1d14d6ee-fd63-4fa1-bfa4-8f47b42119f0)
+#define BT_UUID_OTA     BT_UUID_128_ENCODE(0x1d14d6ee, 0xfd63, 0x4fa1, 0xbfa4, 0x8f47b42119f0)
 
 /* 
  * UUIDs for Custom BLE Characteristics 
@@ -114,7 +114,7 @@
 /* Passkey (WLS): 1a337328-6bfa-60ee-761a-2021d5e8cfc5 */
 #define BT_UUID_WLS_PK              BT_UUID_128_ENCODE(0x1a337328, 0x6bfa, 0x60ee, 0x761a, 0x2021d5e8cfc5)
 
-/* OTA Control (OTA): f7bf3564-fb6d-4e53-88a4-5e37e0326063 */
+/* OTA Control (OTAC): f7bf3564-fb6d-4e53-88a4-5e37e0326063 */
 #define BT_UUID_OTA_OTAC            BT_UUID_128_ENCODE(0xf7bf3564, 0xfb6d, 0x4e53, 0x88a4, 0x5e37e0326063)
 
 #endif /* services.h */

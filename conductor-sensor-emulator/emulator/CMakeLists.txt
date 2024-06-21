@@ -3,6 +3,6 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
 project(conductor-sensor-emulator)
 
-target_sources(app PRIVATE src/main.c services/services.c)
+target_sources(app PRIVATE src/main.c services/services.c services/device_settings.c)
 
 zephyr_library_include_directories(.)

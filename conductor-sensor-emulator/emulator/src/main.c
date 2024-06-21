@@ -136,11 +136,9 @@ static const struct bt_data ad[] = {
 
 /* (2nd) advertisement packet data structure */
 static const struct bt_data sd[] = {
-    
-    /* TODO: add data to advertise here; currently it's an empty packet */
 
     /* advertise some data */
-    // BT_DATA_BYTES(BT_DATA_UUID16_ALL, &val)  /* the UUID of one of our services. */
+    BT_DATA_BYTES(BT_DATA_UUID16_ALL, BT_UUID_SI)   /* the UUID of our primary service. */
 
 };
 
@@ -198,14 +196,24 @@ int main(void) {
     /* initialize console */
     console_init();                         /* initialize CLI. */
 
-    /* instantiate local variables */
-    int ret;                                /* to hold return codes. */
-
-
-
-
     /* greet */
     greet();
+
+    /* instantiate local variables */
+    int err;                                /* to hold return codes. */
+
+    /* enable the bluetooth host stack */
+    err = bt_enable(bt_ready);
+    if (err) { printk("BLE initialization failed\n"); error(); }
+
+    /* use a semaphore to wait for bt_enable to call bt_ready, frees RTOS to complete other tasks */
+    err = k_sem_take(&ble_init_ok, K_MSEC(500));    /* increment semaphore count to 1 (mutex). */
+    if (err) { printk("BLE initializtion did not complete in time\n"); error(); }
+
+    /* initialize services */
+    err = init_services();
+
+    /* TODO: call service methods from their respective files here. */
     
     return 0;
 }

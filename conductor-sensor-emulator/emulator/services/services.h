@@ -9,6 +9,9 @@
 #include <zephyr/bluetooth/uuid.h>
 #include <zephyr/bluetooth/gatt.h>
 
+/* the length of transmission buffers */
+#define MAX_TRANSMIT_SIZE 240
+
 /* 
  * UUIDs for Standard BLE Services 
  */

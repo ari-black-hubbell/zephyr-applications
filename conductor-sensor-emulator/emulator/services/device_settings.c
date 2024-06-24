@@ -4,17 +4,6 @@
  *    LED, Fault Current, Low Battery Count, Alarm Timeout, Alarm Clear.  
  */
 
-#include <soc.h>
-#include <zephyr/kernel.h>
-#include <zephyr/types.h>
-#include <zephyr/sys/printk.h>
-#include <zephyr/sys/byteorder.h>
-
-#include <zephyr/bluetooth/bluetooth.h>
-#include <zephyr/bluetooth/hci.h>
-#include <zephyr/bluetooth/conn.h>
-#include <zephyr/bluetooth/uuid.h>
-#include <zephyr/bluetooth/gatt.h>
 
 #include "services.h"
 

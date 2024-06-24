@@ -21,6 +21,9 @@
 
 /* initialize data structures */
 uint8_t data[MAX_TRANSMIT_SIZE];        /* transmission buffer to hold data. */
+static uint8_t ct[16];
+
+
 
 
 /* Service initialization function to execute after connection is established.
@@ -53,6 +56,15 @@ static ssize_t on_receive(struct bt_conn *conn,
                     printk("\n");
                     return len;
                 }
+
+static ssize_t read_ct(struct bt_conn *conn, const struct bt_gatt_attr *attr,
+		       void *buf, uint16_t len, uint16_t offset)
+{
+	const char *value = "Device Settings";
+
+	return bt_gatt_attr_read(conn, attr, buf, len, offset, value,
+				 sizeof(ct));
+}
                 
 
 /* function called whenever the client changes the CCCD register. */
@@ -83,15 +95,30 @@ void on_cccd_changed(const struct bt_gatt_attr *attr, uint16_t value) {
 /* A macro to statically register the service in the host stack. 
  */
 BT_GATT_SERVICE_DEFINE(DS,                                      /* the name of the service. */
-    BT_GATT_PRIMARY_SERVICE(BT_UUID_DS),                        /* the primary service UUID. */ 
-    BT_GATT_CHARACTERISTIC(BT_UUID_DS_LED,       // characteritic UUID (transmitting)
-    BT_GATT_CHRC_WRITE | BT_GATT_CHRC_WRITE_WITHOUT_RESP,
-                        BT_GATT_PERM_WRITE,              
-                        NULL, on_receive, NULL),              // callbacks (read, write, user data)
-    BT_GATT_CCC(on_cccd_changed,                        // client characteristic configuration (when config changed)
-            BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),    // hold information about read/write permissions
+    BT_GATT_PRIMARY_SERVICE(BT_UUID_DECLARE_128(BT_UUID_DS)),                        /* the primary service UUID. */ 
+    // BT_GATT_SECONDARY_SERVICE
+    // BT_GATT_SERVICE
+
+    BT_GATT_DESCRIPTOR(     BT_UUID_DECLARE_128(BT_UUID_DS_DES),            // not showing up :(
+                            BT_GATT_PERM_READ, read_ct, NULL, NULL),
+    BT_GATT_CUD(            "Device Settings", BIT(0)), /* read only */
+
+    BT_GATT_CHARACTERISTIC( BT_UUID_DECLARE_128(BT_UUID_DS_LED),       // characteritic UUID (transmitting)
+                            BT_GATT_CHRC_WRITE | BT_GATT_CHRC_WRITE_WITHOUT_RESP,
+                            BT_GATT_PERM_WRITE, NULL, on_receive, NULL),              // callbacks (read, write, user data)),
+    BT_GATT_CUD(            "LED", BT_GATT_PERM_READ), /* read only */
+
+    BT_GATT_CHARACTERISTIC( BT_UUID_DECLARE_128(BT_UUID_DS_FC),       // characteritic UUID (transmitting)
+                            BT_GATT_CHRC_WRITE | BT_GATT_CHRC_WRITE_WITHOUT_RESP,
+                            BT_GATT_PERM_WRITE, NULL, on_receive, NULL),              // callbacks (read, write, user data)),
+    BT_GATT_CUD(            "Fault Current", BT_GATT_PERM_READ), /* read only */
+
+    // BT_GATT_CCC(on_cccd_changed,                        // client characteristic configuration (when config changed)
+    //         BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),    // hold information about read/write permissions
 
 );
+
+
 
 
 // /* function for sending notifications to a client with the provided data, given that the 

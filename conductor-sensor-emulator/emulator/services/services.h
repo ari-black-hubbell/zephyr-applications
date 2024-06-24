@@ -96,6 +96,8 @@
 /* LED (DS): 0db91d25-3fb1-4be0-98fe-f9db8fcc6bb6 */
 #define BT_UUID_DS_LED              BT_UUID_128_ENCODE(0x0db91d25, 0x3fb1, 0x4be0, 0x98fe, 0xf9db8fcc6bb6)
 
+#define BT_UUID_DS_DES              BT_UUID_128_ENCODE(0x0db91d25, 0x3fb1, 0x4be0, 0x98fe, 0xf9db8fcc6bb7)
+
 /* Fault Current: (DS): 26d0392e-52f9-1745-f53a-0603066a3f73 */
 #define BT_UUID_DS_FC               BT_UUID_128_ENCODE(0x26d0392e, 0x52f9, 0x1745, 0xf53a, 0x0603066a3f73)
 

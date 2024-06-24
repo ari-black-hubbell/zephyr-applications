@@ -8,6 +8,7 @@ target_sources(app PRIVATE
     services/services.c
     services/device_settings.c
     services/sensor_info.c
+    services/wireless_security.c
 )
 
 zephyr_library_include_directories(.)

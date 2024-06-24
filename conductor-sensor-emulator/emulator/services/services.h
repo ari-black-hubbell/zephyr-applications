@@ -13,67 +13,6 @@
 #define MAX_TRANSMIT_SIZE 240
 
 /* 
- * UUIDs for Standard BLE Services 
- */
-
-/* UUID base: 00000000-0000-1000-8000-00805F9B34FB */
-// /* Generic Access: 1800 */
-// #define BT_UUID_GAP_VAL     0x1800
-// #define BT_UUID_GAP         BT_UUID_DECLARE_16(BT_UUID_GAP_VAL)
-
-// /* Generic Attribute: 1801 */
-// #define BT_UUID_GATT_VAL    0x1801
-// #define BT_UUID_GATT        BT_UUID_DECLARE_16(BT_UUID_GATT_VAL)
-
-// /* Device Information: 180A */
-// #define BT_UUID_DIS_VAL     0x180a
-// #define BT_UUID_DIS         BT_UUID_DECLARE_16(BT_UUID_DIS_VAL)
-
-// /* Battery Service: 180F */
-// #define BT_UUID_BAS_VAL     0x180f
-// #define BT_UUID_BAS         BT_UUID_DECLARE_16(BT_UUID_BAS_VAL)
-
-/* 
- * UUIDs for Standard BLE Characteristics 
- */
-
-/* Device Name (GAP): 2a00 */
-// #define BT_UUID_GAP_DN_VAL          0x2a00
-// #define BT_UUID_GAP_DN              BT_UUID_DECLARE_16(BT_UUID_GAP_DN_VAL)
-
-// /* Appearance (GAP): 2a01 */
-// #define BT_UUID_GAP_APP_VAL         0x2a01
-// #define BT_UUID_GAP_APP             BT_UUID_DECLARE_16(BT_UUID_GAP_APP_VAL)
-
-// /* Service Change Request (GATT): 2a05 */
-// #define BT_UUID_GATT_SCR_VAL        0x2a05
-// #define BT_UUID_GATT_SCR            BT_UUID_DECLARE_16(BT_UUID_GATT_SCR_VAL)
-
-// /* Client Supported Features (GATT): 2b29 */
-// #define BT_UUID_GATT_CSF_VAL        0x2b29
-// #define BT_UUID_GATT_CSF            BT_UUID_DECLARE_16(BT_UUID_GATT_CSF_VAL)
-
-// /* Database Hash (GATT): 2b2a */
-// #define BT_UUID_GATT_DBH_VAL        0x2b2a
-// #define BT_UUID_GATT_DBH            BT_UUID_DECLARE_16(BT_UUID_GATT_DBH_VAL)
-
-// /* System ID (DIS): 2129 */
-// #define BT_UUID_DIS_SID_VAL         0x2129
-// #define BT_UUID_DIS_SID             BT_UUID_DECLARE_16(BT_UUID_DIS_SID_VAL)
-
-// /* Firmware Revision (DIS): 2a26 */
-// #define BT_UUID_DIS_FR_VAL          0x2a26
-// #define BT_UUID_DIS_FR              BT_UUID_DECLARE_16(BT_UUID_DIS_FR_VAL)
-
-// /* Manufacturer's Name String (DIS): 2a29 */
-// #define BT_UUID_DIS_MNS_VAL         0x2a29
-// #define BT_UUID_DIS_MNS             BT_UUID_DECLARE_16(BT_UUID_DIS_MNS_VAL)
-
-// /* Battery Level (BAS): 2a19 */
-// #define BT_UUID_BAS_BL_VAL          0x2a19
-// #define BT_UUID_BAS_BL              BT_UUID_DECLARE_16(BT_UUID_BAS_BL_VAL)
-
-/* 
  * UUIDs for Custom BLE Services 
  */
 
@@ -95,8 +34,6 @@
 
 /* LED (DS): 0db91d25-3fb1-4be0-98fe-f9db8fcc6bb6 */
 #define BT_UUID_DS_LED              BT_UUID_128_ENCODE(0x0db91d25, 0x3fb1, 0x4be0, 0x98fe, 0xf9db8fcc6bb6)
-
-#define BT_UUID_DS_DES              BT_UUID_128_ENCODE(0x0db91d25, 0x3fb1, 0x4be0, 0x98fe, 0xf9db8fcc6bb7)
 
 /* Fault Current: (DS): 26d0392e-52f9-1745-f53a-0603066a3f73 */
 #define BT_UUID_DS_FC               BT_UUID_128_ENCODE(0x26d0392e, 0x52f9, 0x1745, 0xf53a, 0x0603066a3f73)

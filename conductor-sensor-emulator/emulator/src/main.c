@@ -153,13 +153,15 @@ static const struct bt_data sd[] = {
  */
 int init_services(void) {
     
-    int err = 0;    /* return (error) value. */
+    int err = 0;                            /* return (error) value. */
 
-    /* TODO: add functionality */
+    uint8_t data[MAX_TRANSMIT_SIZE];        /* transmission buffer to hold data. */
+
+    memset(&data, 0, MAX_TRANSMIT_SIZE);
 
     return err;
-
 }
+
 
 /* BT Callback: start advertising after the bluetooth host stack is enabled.
  *

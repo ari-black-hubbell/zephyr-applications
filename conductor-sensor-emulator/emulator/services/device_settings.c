@@ -8,27 +8,9 @@
 #include "services.h"
 
 
-/* initialize data structures */
-uint8_t data[MAX_TRANSMIT_SIZE];        /* transmission buffer to hold data. */
-
-/* Service initialization function to execute after connection is established.
- * 
- * Returns: 0 on success, != 0 otherwise.
- */
-int init_service(void) {
-
-    /* instantiate local variables */
-    int err = 0;    /* to hold return codes. */
-
-    /* initialize transmission buffer to 0 */
-    memset(&data, 0, MAX_TRANSMIT_SIZE);
-
-    return err;
-}
-
 /* function called whenever RX characteristic is written to by a client. 
  * unpacks and outputs received data.
-*/
+ */
 static ssize_t on_receive(struct bt_conn *conn,
                 const struct bt_gatt_attr *attr,
                 const void *buf,

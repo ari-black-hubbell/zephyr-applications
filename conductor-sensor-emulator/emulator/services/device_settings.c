@@ -7,21 +7,50 @@
 
 #include "services.h"
 
+/* a bitmask to turn on specific lights. 
+ * bits 7-2 reserved, bit 1 red LED (1 on / 0 off),
+ * bit 0 green LED (1 on / 0 off).
+ */
+uint8_t led_value = 0x00;   
+
 
 /* function called whenever RX characteristic is written to by a client. 
  * unpacks and outputs received data.
  */
-static ssize_t on_receive(struct bt_conn *conn,
-                const struct bt_gatt_attr *attr,
-                const void *buf,
-                uint16_t len,
-                uint16_t offset,
-                uint8_t flags) {
+static ssize_t on_receive(struct bt_conn *conn, const struct bt_gatt_attr *attr,
+                const void *buf, uint16_t len, uint16_t offset, uint8_t flags) {
+                    // printk("led len: %d\n", sizeof(led_value));
+
+                    printk("===============================\n");
+
+                    /* print received data */
+                    printk("data received: ");
                     const uint8_t * buffer = buf;
-                    printk("Received data, handle %d, conn %p, data 0x", attr->handle, conn);
-                    for(uint8_t i = 0; i < len; i++) { printk("%02X", buffer[i]);}              // iterate through buffer, print all data
+                    for(uint8_t i = 0; i < len; i++) { printk("%02X", buffer[i]);} 
                     printk("\n");
-                    return len;
+
+                    /* write data to target */
+                    uint8_t *value = attr->user_data;
+                    memcpy(value, buf, len);        /* TODO: unsafe, add buffer overflow prevention here */
+
+                    /* print data written to the target */
+                    printk("value: ");
+                    for(uint8_t i = 0; i < len; i++) { printk("%02X", value[i]);}
+                    printk("\n\n");
+
+                    /* print bitmask 
+                     * note: can add testing later using CLI interface using read/getter functions for 
+                     * values otherwise unreadable.
+                     */
+                    /* operation output is 2 if true 0010 */
+                    printk("red LED on: %d\n", (led_value & BIT(1)) == 2);  
+                    /* operation output is 1 if true 0001 */
+                    printk("green LED on: %d\n\n", (led_value & BIT(0)) == 1); 
+
+                    printk("===============================\n");
+
+	                return len;
+
                 }
 
 /* function called whenever the client changes the CCCD register. */
@@ -65,7 +94,7 @@ BT_GATT_SERVICE_DEFINE(DS,                                         /* service na
                             BT_GATT_CHRC_WRITE_WITHOUT_RESP, 
                             BT_GATT_PERM_WRITE,                     /* permissions */
                             NULL, on_receive,                       /* callbacks (read, write) */
-                            NULL                                    /* user data */
+                            &led_value                              /* user data */
     ),
     /* LED descriptor */
     BT_GATT_CUD("LED", BT_GATT_PERM_READ),                      /* read only */

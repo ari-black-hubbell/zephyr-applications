@@ -21,6 +21,8 @@
 
 #define DEVICE_NAME             CONFIG_BT_DEVICE_NAME           
 #define DEVICE_NAME_LEN         (sizeof(DEVICE_NAME) - 1)
+#define COMPANY_ID              CONFIG_BT_COMPANY_ID
+#define COMPANY_ID_LEN          (sizeof(COMPANY_ID) - 1)
 
 /* initialize semaphore */
 static K_SEM_DEFINE(ble_init_ok, 0, 1); /* semaphore as forced mutex, 1 if avail 0 if not. */
@@ -31,7 +33,7 @@ struct bt_conn *my_connection;
 
 /* Output a greeting message to the console.
 
- * Returns: (int) 0 on success, != 0 on error.
+ * @return 0 on success, != 0 on error.
  */
 int greet(void) {
     
@@ -44,8 +46,8 @@ int greet(void) {
 
 /* Connection callback: notify the application of a new connection.
  *
- * `struct bt_conn *conn`: The new BT connection object.
- * `uint8_t err`:          HCI error, 0 for success and != 0 otherwise.
+ * @param *conn     The new BT connection object.
+ * @param err       HCI error, 0 for success and != 0 otherwise.
  */
 static void connected(struct bt_conn *conn, uint8_t err) {
     
@@ -71,8 +73,8 @@ static void connected(struct bt_conn *conn, uint8_t err) {
 
 /* Connection callback: notify the application of a connection termination.
  *
- * `struct bt_conn *conn`: The new BT connection object.
- * `uint8_t reason`:       Reason for disconnect, `BT_HCI_ERR_*`.
+ * @param *conn    The new BT connection object.
+ * @param reason   Reason for disconnect, `BT_HCI_ERR_*`.
  */
 static void disconnected(struct bt_conn *conn, uint8_t reason) {
     printk("Disconnected (reason %u)\n", reason);
@@ -81,10 +83,10 @@ static void disconnected(struct bt_conn *conn, uint8_t reason) {
 
 /* Connection callback: notify the application of parameter update request.
  *
- * `struct bt_conn *conn`:           The new BT connection object.
- * `struct be_le_conn_param *param`: The proposed connection parameters.
+ * @param *conn     The new BT connection object.
+ * @param *param    The proposed connection parameters.
  * 
- * Returns: (`true`).
+ * @return `true`
  */
 static bool le_param_req(struct bt_conn *conn, struct bt_le_conn_param *param) {
     /* accept all parameter change requests */
@@ -93,10 +95,10 @@ static bool le_param_req(struct bt_conn *conn, struct bt_le_conn_param *param) {
 
 /* Connection callback: notify the application that the parameters have been updated.
  *
- * `struct bt_conn *conn`:           The BT connection object.
- * `uint16_t interval`:              The new connection interval.
- * `uint16_t latency`:               The new connection latency.
- * `uint16_t timeout`:               The new connection supervision timeout.
+ * @param *conn         The BT connection object.
+ * @param interval      The new connection interval.
+ * @param latency       The new connection latency.
+ * @param timeout       The new connection supervision timeout.
  */
 static void le_param_updated(struct bt_conn *conn, uint16_t interval, uint16_t latency,
                              uint16_t timeout) {
@@ -127,29 +129,71 @@ static struct bt_conn_cb conn_callbacks = {
         .le_param_updated       = le_param_updated
 };
 
+#define BT_CUSTOM_DATA 0x08, 0xA0  // containing custom data
+
 /* (1st) advertisement packet data structure */
 static const struct bt_data ad[] = {
     
     /* set advertising flags */
     BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)), /* advertise indefinitely, no BT classic. */
+    // BT_DATA_BYTES(BT_DATA_FLAGS, BT_LE_AD_NO_BREDR),
+    
+
+
+    // proposed format: flags, manuf. data, name
+    // manuf. data:
+        // company ID (0, 1)
+        // product ID (2, 3)
+        // message format (4)
+        // mtu ID (5, 6, 7, 8)
+        // rssi (?)
+        // peripheral name
+
+
+
+
+    BT_DATA_BYTES(BT_DATA_MANUFACTURER_DATA, 
+            0xA0, 0x08,      // company ID
+            0x03, 0x00,     // product ID
+            0x01,           // message format
+            0x00, 0x00,
+            0x00, 0x00      // mtu ID
+                            // rssi
+        
+        
+        
+        ),
+
+
+    // BT_DATA_BYTES(BT_CUSTOM_DATA, 0xA0, 0x08),
     
     /* advertise some data */
+    // BT_DATA(BT_DATA_MANUFACTURER_DATA, COMPANY_ID, sizeof(COMPANY_ID) - 1)
+    // BT_DATA_BYTES(BT_DATA_MANUFACTURER_DATA, 0x08, 0xA0),
     BT_DATA(BT_DATA_NAME_COMPLETE, DEVICE_NAME, DEVICE_NAME_LEN)          /* our full device name. */
+    // BT_DATA(BT_DATA_NAME_SHORTENED, DEVICE_NAME, 8)
+    // BT_DATA(BT_DATA_NAME_COMPLETE, CONFIG_BT_DEVICE_NAME, sizeof(CONFIG_BT_DEVICE_NAME) - 1)
 
 };
+
 
 /* (2nd) advertisement packet data structure */
 static const struct bt_data sd[] = {
 
     /* advertise some data */
-    // BT_DATA_BYTES(BT_DATA_UUID16_ALL, BT_UUID_SI)   /* the UUID of our primary service. does it matter what we choose? */   
-    BT_DATA_BYTES(BT_DATA_UUID16_ALL, BT_UUID_16_ENCODE(BT_UUID_DIS_VAL))  
+
+    // BT_DATA_BYTES(BT_DATA_UUID16_ALL, BT_UUID_SI)   /* the UUID of our primary service. does it matter what we choose? */  
+    // BT_DATA(BT_DATA_NAME_COMPLETE, CONFIG_BT_DEVICE_NAME, sizeof(CONFIG_BT_DEVICE_NAME) - 1) 
+    // BT_DATA(BT_DATA_MANUFACTURER_DATA, COMPANY_ID, COMPANY_ID_LEN)
+    // BT_DATA_BYTES(BT_DATA_UUID16_ALL, BT_UUID_16_ENCODE(BT_UUID_DIS_VAL))  
+    // BT_DATA(BT_DATA_MANUFACTURER_DATA)
+    // 0x08A0
 
 };
 
 /* Initialize services.
  *
- * Returns: 0 on success, != 0 otherwise.
+ * @return      0 on success, != 0 otherwise.
  */
 int init_services(void) {
     
@@ -165,7 +209,7 @@ int init_services(void) {
 
 /* BT Callback: start advertising after the bluetooth host stack is enabled.
  *
- * `uint8_t err`:          HCI error, 0 for success and != 0 otherwise.
+ * @param err   HCI error, 0 for success and != 0 otherwise.
  */
 static void bt_ready(int err) {
 

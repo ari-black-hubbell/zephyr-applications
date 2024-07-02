@@ -50,7 +50,7 @@ static ssize_t on_read(struct bt_conn *conn,
 }
 
 
-/* function called whenever RX characteristic is written to by a client. 
+/* function called whenever characteristic is written to by a client. 
  * unpacks and outputs received data.
  */
 static ssize_t on_receive(struct bt_conn *conn, const struct bt_gatt_attr *attr,

@@ -39,6 +39,22 @@ uint8_t alt_value = 0x00;
  */
 uint8_t alc_value = 0x00;
 
+/* Devicetree identifier for LED0 alias. */
+#define LED0_NODE DT_ALIAS(led0)
+
+/* Devicetree identifier for LED1 alias. */
+#define LED1_NODE DT_ALIAS(led1)
+
+/* Static initializer for LED0 IO. */
+static const struct gpio_dt_spec led_0 = GPIO_DT_SPEC_GET(LED0_NODE, gpios);
+
+/* Static initializer for LED1 IO. */
+static const struct gpio_dt_spec led_1 = GPIO_DT_SPEC_GET(LED1_NODE, gpios);
+
+/* Boolean indicating if the LEDs have been previously configured. */
+bool led_init = false;
+
+
 /* REMOVE LATER, TEMP FOR TESTING*/
 static ssize_t on_read(struct bt_conn *conn,
 			       const struct bt_gatt_attr *attr, void *buf,
@@ -49,6 +65,39 @@ static ssize_t on_read(struct bt_conn *conn,
 				 sizeof(fc_value));
 }
 
+int toggle_led(void) {
+    /* check for errors */
+    int ret;
+
+    if (!led_init) {
+        if (!gpio_is_ready_dt(&led_0) || !gpio_is_ready_dt(&led_1)) {
+            return 1;
+        }
+        ret = gpio_pin_configure_dt(&led_0, GPIO_OUTPUT_ACTIVE);
+        if (ret < 0) {
+            return 2;
+        }
+        ret = gpio_pin_configure_dt(&led_1, GPIO_OUTPUT_ACTIVE);
+        if (ret < 0) {
+            return 3;
+        }
+    }
+
+    bool led_red = (led_value & BIT(1)) == 2;
+    bool led_green = (led_value & BIT(0)) == 1;
+
+    gpio_pin_set_dt(&led_0, led_red);
+    gpio_pin_set_dt(&led_1, led_green);
+
+
+    return 0;
+
+    // led_on()
+
+    // ret = gpio_pin_toggle_dt(&led_0);
+
+    /* toggle leds */
+}
 
 /* function called whenever characteristic is written to by a client. 
  * unpacks and outputs received data.
@@ -110,7 +159,11 @@ static ssize_t on_receive(struct bt_conn *conn, const struct bt_gatt_attr *attr,
                         /* output to console */
                         switch (handle) {
                             case 3:
+                                toggle_led();
                                 printk("value (led): ");
+                                /* flip LED */
+                                // bool led_red = (led_value & BIT(1)) == 2;
+                                // bool led_green = (led_value & BIT(0)) == 1;
                                 break;
                             case 12:
                                 printk("value (alt): ");
@@ -141,7 +194,7 @@ static ssize_t on_receive(struct bt_conn *conn, const struct bt_gatt_attr *attr,
                     printk(" mT\n");
 
                     /* Low Battery Count value */
-                    printk("low battery value: :");
+                    printk("low battery value: ");
                     char lbc_arr[sizeof(lbc_value)];
                     bt_gatt_attr_read(conn, attr, lbc_arr, len, offset, &lbc_value, sizeof(lbc_value));
                     for(uint8_t i = 0; i < len; i++) {printk("%X", lbc_arr[i]);}

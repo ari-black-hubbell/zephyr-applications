@@ -61,12 +61,12 @@ static void connected(struct bt_conn *conn, uint8_t err) {
         bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));   /* convert dst addr to string. */
 
         /* format output */
-        printk("Connection parameters updated!  \n\
-        Connected to: %s                        \n\
-        New connection interval: %u             \n\
-        New peripheral latency: %u              \n\
-        New connection supervisory timeout: %u  \n"
-        , addr, info.le.interval, info.le.latency, info.le.timeout);
+    //     printk("Connection parameters updated!  \n\
+    //     Connected to: %s                        \n\
+    //     New connection interval: %u             \n\
+    //     New peripheral latency: %u              \n\
+    //     New connection supervisory timeout: %u  \n"
+    //     , addr, info.le.interval, info.le.latency, info.le.timeout);
     }
 
 }
@@ -112,12 +112,12 @@ static void le_param_updated(struct bt_conn *conn, uint16_t interval, uint16_t l
         bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));   /* convert dst addr to string. */
 
         /* format output */
-        printk("Connection parameters updated!  \n\
-        Connected to: %s                        \n\
-        New connection interval: %u             \n\
-        New peripheral latency: %u              \n\
-        New connection supervisory timeout: %u  \n"
-        , addr, info.le.interval, info.le.latency, info.le.timeout);
+        // printk("Connection parameters updated!  \n\
+        // Connected to: %s                        \n\
+        // New connection interval: %u             \n\
+        // New peripheral latency: %u              \n\
+        // New connection supervisory timeout: %u  \n"
+        // , addr, info.le.interval, info.le.latency, info.le.timeout);
     }
 }
 
@@ -159,9 +159,6 @@ static const struct bt_data ad[] = {
             0x00, 0x00,
             0x00, 0x00      // mtu ID
                             // rssi
-        
-        
-        
         ),
 
 

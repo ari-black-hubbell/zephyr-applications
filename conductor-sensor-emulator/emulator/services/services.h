@@ -4,6 +4,7 @@
 /* services.h */
 
 #include <soc.h>
+#include <stdlib.h>
 #include <zephyr/kernel.h>
 
 #include <zephyr/bluetooth/bluetooth.h>
@@ -11,6 +12,9 @@
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/uuid.h>
 #include <zephyr/bluetooth/gatt.h>
+#include <zephyr/drivers/gpio.h>
+#include <zephyr/random/random.h>	// prf
+#include <zephyr/crypto/crypto.h>	// cryptography
 
 /* the length of transmission buffers */
 #define MAX_TRANSMIT_SIZE 240

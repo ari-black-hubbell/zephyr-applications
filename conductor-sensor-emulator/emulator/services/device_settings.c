@@ -17,7 +17,6 @@ uint8_t led_value = 0x00;
 /* (Fault Current) specifies the trigger level for the magnetometer in micro tesla.
  */
 uint16_t fc_value = 0x0000;
-// unsigned char fc_value = 0x0000;
 
 /* (Low Battery Count) specifies the coulomb count at which to signal a low battery.
  */
@@ -55,12 +54,12 @@ static const struct gpio_dt_spec led_1 = GPIO_DT_SPEC_GET(LED1_NODE, gpios);
 bool led_init = false;
 
 
-/* REMOVE LATER, TEMP FOR TESTING*/
+/* REMOVE LATER, TEMP FOR TESTING.
+ * (Specifications indicate there should be no read callback for this service.)
+ */
 static ssize_t on_read(struct bt_conn *conn,
 			       const struct bt_gatt_attr *attr, void *buf,
 			       uint16_t len, uint16_t offset) {
-    /* TODO: read value(s) from database */
-	// uint8_t health_data = 0;    /* temporary value */
 	return bt_gatt_attr_read(conn, attr, buf, len, offset, &fc_value,
 				 sizeof(fc_value));
 }
@@ -83,20 +82,17 @@ int toggle_led(void) {
         }
     }
 
+    /* isolate values in bitmask */
     bool led_red = (led_value & BIT(1)) == 2;
     bool led_green = (led_value & BIT(0)) == 1;
 
+    /* set the correct GPIO pins */
     gpio_pin_set_dt(&led_0, led_red);
     gpio_pin_set_dt(&led_1, led_green);
 
 
     return 0;
 
-    // led_on()
-
-    // ret = gpio_pin_toggle_dt(&led_0);
-
-    /* toggle leds */
 }
 
 /* function called whenever characteristic is written to by a client. 
@@ -200,28 +196,7 @@ static ssize_t on_receive(struct bt_conn *conn, const struct bt_gatt_attr *attr,
                     for(uint8_t i = 0; i < len; i++) {printk("%X", lbc_arr[i]);}
                     printk(" C\n");     /* what should the correct units be here? (coulomb counter counts) */
 
-
-                    // printk("%d", fc_value);         // not printing correct value (?) try using actual read fn
-                    // for(int i = 0; i < len; i++) {printk("%X", fc_value[i]);}
-                    // printk(" mT\n");
-
-                    /* print FC value */
-                    // printk("fault current value: ");
-                    // uint16_t value_16 = fc_value;
-                    // for(uint8_t i = 0; i < len; i++) {printk("%02X", value_16[i]);}
-                    // printk("\n");
-
-
-                    printk("\n");
-
-                    // char val[sizeof(fc_value)];
-                    // bt_gatt_attr_read(conn, attr, val, len, offset, &fc_value, sizeof(fc_value));
-                    // for(uint8_t i = 0; i < len; i++) {printk("%X", val[i]);}
-                    // printk("\n");
-
-
                     printk("===============================\n");
-                    // return bt_gatt_attr_read(conn, attr, buf, len, offset, &fc_value, sizeof(fc_value));
 
 	                return len;
 
@@ -257,11 +232,6 @@ void on_cccd_changed(const struct bt_gatt_attr *attr, uint16_t value) {
 BT_GATT_SERVICE_DEFINE(DS,                                         /* service name */
     BT_GATT_PRIMARY_SERVICE(BT_UUID_DECLARE_128(BT_UUID_DS)),      /* service UUID */ 
 
-    /* attempt to add a descriptor / name for the custom service, unsuccessful. */
-    // BT_GATT_DESCRIPTOR(     BT_UUID_DECLARE_128(BT_UUID_DS_DES),
-    //                         BT_GATT_PERM_READ, read_ct, NULL, NULL),
-    // BT_GATT_CUD(            "Device Settings", BT_GATT_PERM_READ),
-
     /* LED characteristic, handle 3 */
     BT_GATT_CHARACTERISTIC( BT_UUID_DECLARE_128(BT_UUID_DS_LED),    /* characteristic UUID */  
                             BT_GATT_CHRC_WRITE |                    /* properties */
@@ -282,7 +252,9 @@ BT_GATT_SERVICE_DEFINE(DS,                                         /* service na
     //                         &fc_value
     // ),   
 
-    /* DELETE LATER, TEMP FOR TESTING*/
+   /* REMOVE LATER, TEMP FOR TESTING.
+    * (Specifications indicate there should be no read callback for this service.)
+    */
     BT_GATT_CHARACTERISTIC( BT_UUID_DECLARE_128(BT_UUID_DS_FC),     
                             BT_GATT_CHRC_WRITE | BT_GATT_CHRC_READ |
                             BT_GATT_CHRC_WRITE_WITHOUT_RESP,

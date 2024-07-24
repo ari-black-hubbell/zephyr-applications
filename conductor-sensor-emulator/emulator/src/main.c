@@ -30,7 +30,6 @@ static K_SEM_DEFINE(ble_init_ok, 0, 1); /* semaphore as forced mutex, 1 if avail
 /* instantiate bluetooth connection */
 struct bt_conn *my_connection;
 
-
 /* Output a greeting message to the console.
 
  * @return 0 on success, != 0 on error.
@@ -60,13 +59,14 @@ static void connected(struct bt_conn *conn, uint8_t err) {
     else {
         bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));   /* convert dst addr to string. */
 
-        /* format output */
-    //     printk("Connection parameters updated!  \n\
-    //     Connected to: %s                        \n\
-    //     New connection interval: %u             \n\
-    //     New peripheral latency: %u              \n\
-    //     New connection supervisory timeout: %u  \n"
-    //     , addr, info.le.interval, info.le.latency, info.le.timeout);
+        /* console output */
+        /*
+        printk("Connection parameters updated!  \n\
+        Connected to: %s                        \n\
+        New connection interval: %u             \n\
+        New peripheral latency: %u              \n\
+        New connection supervisory timeout: %u  \n"
+        , addr, info.le.interval, info.le.latency, info.le.timeout); */
     }
 
 }
@@ -111,13 +111,15 @@ static void le_param_updated(struct bt_conn *conn, uint16_t interval, uint16_t l
     else {
         bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));   /* convert dst addr to string. */
 
-        /* format output */
-        // printk("Connection parameters updated!  \n\
-        // Connected to: %s                        \n\
-        // New connection interval: %u             \n\
-        // New peripheral latency: %u              \n\
-        // New connection supervisory timeout: %u  \n"
-        // , addr, info.le.interval, info.le.latency, info.le.timeout);
+        /* console output */
+        /*
+        printk("Connection parameters updated!  \n\
+        Connected to: %s                        \n\
+        New connection interval: %u             \n\
+        New peripheral latency: %u              \n\
+        New connection supervisory timeout: %u  \n"
+        , addr, info.le.interval, info.le.latency, info.le.timeout);
+        */
     }
 }
 
@@ -134,42 +136,29 @@ static struct bt_conn_cb conn_callbacks = {
 /* (1st) advertisement packet data structure */
 static const struct bt_data ad[] = {
     
-    /* set advertising flags */
+    /* format: flags, manuf. data, name */
+
+    /* advertising flags */
     BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)), /* advertise indefinitely, no BT classic. */
-    // BT_DATA_BYTES(BT_DATA_FLAGS, BT_LE_AD_NO_BREDR),
-    
 
-
-    // proposed format: flags, manuf. data, name
-    // manuf. data:
-        // company ID (0, 1)
-        // product ID (2, 3)
-        // message format (4)
-        // mtu ID (5, 6, 7, 8)
-        // rssi (?)
-        // peripheral name
-
-
-
-
+    /* manuf. data:
+     *   company ID     (0, 1)
+     *   product ID     (2, 3)
+     *   message format (4)
+     *   mtu ID         (5, 6, 7, 8)
+     *   rssi           (?)
+    */
     BT_DATA_BYTES(BT_DATA_MANUFACTURER_DATA, 
-            0xA0, 0x08,      // company ID
+            0xA0, 0x08,     // company ID
             0x03, 0x00,     // product ID
             0x01,           // message format
-            0x00, 0x00,
-            0x00, 0x00      // mtu ID
-                            // rssi
+            0x00, 0x00,     // mtu ID
+            0x00, 0x00      // rssi
+                            
         ),
-
-
-    // BT_DATA_BYTES(BT_CUSTOM_DATA, 0xA0, 0x08),
     
-    /* advertise some data */
-    // BT_DATA(BT_DATA_MANUFACTURER_DATA, COMPANY_ID, sizeof(COMPANY_ID) - 1)
-    // BT_DATA_BYTES(BT_DATA_MANUFACTURER_DATA, 0x08, 0xA0),
+    /* device name */
     BT_DATA(BT_DATA_NAME_COMPLETE, DEVICE_NAME, DEVICE_NAME_LEN)          /* our full device name. */
-    // BT_DATA(BT_DATA_NAME_SHORTENED, DEVICE_NAME, 8)
-    // BT_DATA(BT_DATA_NAME_COMPLETE, CONFIG_BT_DEVICE_NAME, sizeof(CONFIG_BT_DEVICE_NAME) - 1)
 
 };
 
@@ -177,14 +166,7 @@ static const struct bt_data ad[] = {
 /* (2nd) advertisement packet data structure */
 static const struct bt_data sd[] = {
 
-    /* advertise some data */
-
-    // BT_DATA_BYTES(BT_DATA_UUID16_ALL, BT_UUID_SI)   /* the UUID of our primary service. does it matter what we choose? */  
-    // BT_DATA(BT_DATA_NAME_COMPLETE, CONFIG_BT_DEVICE_NAME, sizeof(CONFIG_BT_DEVICE_NAME) - 1) 
-    // BT_DATA(BT_DATA_MANUFACTURER_DATA, COMPANY_ID, COMPANY_ID_LEN)
-    // BT_DATA_BYTES(BT_DATA_UUID16_ALL, BT_UUID_16_ENCODE(BT_UUID_DIS_VAL))  
-    // BT_DATA(BT_DATA_MANUFACTURER_DATA)
-    // 0x08A0
+    /* empty for now; can be used later. */
 
 };
 
@@ -236,9 +218,6 @@ static void error(void) {
     }
 }
 
-
-
-
 int main(void) {
 
     /* initialize console */
@@ -260,8 +239,6 @@ int main(void) {
 
     /* initialize services */
     err = init_services();
-
-    /* TODO: call service methods from their respective files here. */
     
     return 0;
 }

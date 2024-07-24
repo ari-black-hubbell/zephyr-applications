@@ -15,7 +15,7 @@ uint8_t iv[32] = {0};
 /* (Initialization Vector) value used to authenticate connecting devices.
  * calculated using the IV, then sent for verification, write-only.
  */
-uint8_t passkey[16] = {0};
+uint8_t passkey[32] = {0};
 // __uint128_t passkey = 0x00;
 // uint
 
@@ -50,6 +50,7 @@ void hmac(void) {
     // }
     // printk("\n");
 
+    // for smaller 1 byte output
     // uint8_t output[] = {
     //     0x6e, 0x34, 0x0b, 0x9c, 0xff, 0xb3,
     //     0x7a, 0x98, 0x9c, 0xa5, 0x44, 0xe6,
@@ -59,6 +60,7 @@ void hmac(void) {
     //     0xa0, 0x1d,
     // };
 
+    // for larger 16 byte output
     uint8_t output[] = {
         0x37, 0x47, 0x08, 0xff, 0xf7, 0x71, 0x9d, 0xd5,
         0x97, 0x9e, 0xc8, 0x75, 0xd5, 0x6c, 0xd2, 0x28,
@@ -67,6 +69,7 @@ void hmac(void) {
     };
 
     // new: 374708fff7719dd5979ec875d56cd2286f6d3cf7ec317a3b25632aab28ec37bb
+    // app: 374708fff7719dd5979ec875d56cd2286f6d3cf7ec317a3b25632aab28ec37bb
 
 
     printk("expected hash start: %d\n", output[0]);
@@ -74,6 +77,9 @@ void hmac(void) {
 
     for (int i = 0; i < 32; i++) {
         if (output[i] == pkt.out_buf[i]) {
+            /* write to passkey characteristic */
+            passkey[i] = pkt.out_buf[i];
+            printk("passkey val: %d ", passkey[i]);
             continue;
         }
         else {
@@ -81,6 +87,10 @@ void hmac(void) {
         }
     }
     printk("check completed :)\n");
+    printk("passkey successfully written\n");
+    printk("final passkey val: %d\n", passkey[31]);
+
+    
 
 
 
@@ -165,6 +175,12 @@ static ssize_t on_read(struct bt_conn *conn, const struct bt_gatt_attr *attr, vo
 	return bt_gatt_attr_read(conn, attr, buf, len, offset, &iv, sizeof(iv));
 }
 
+static ssize_t on_read_passkey(struct bt_conn *conn, const struct bt_gatt_attr *attr, void *buf,
+			    uint16_t len, uint16_t offset) {
+    
+	return bt_gatt_attr_read(conn, attr, buf, len, offset, &passkey, sizeof(passkey));
+}
+
 /* function called whenever characteristic is written to by a client. 
  * unpacks and outputs received data.
  */
@@ -222,11 +238,19 @@ BT_GATT_SERVICE_DEFINE(WLS,                                          /* service 
     BT_GATT_CUD("Initialization Vector", BT_GATT_PERM_READ),        /* read only */
 
     /* Passkey characteristic */
+    // BT_GATT_CHARACTERISTIC( BT_UUID_DECLARE_128(BT_UUID_WLS_PK),    /* characteristic UUID */  
+    //                         BT_GATT_CHRC_WRITE |                    /* properties */
+    //                         BT_GATT_CHRC_WRITE_WITHOUT_RESP,                      
+    //                         BT_GATT_PERM_WRITE,                     /* permissions */
+    //                         NULL, on_receive,                       /* callbacks (read, write) */
+    //                         &passkey                                /* user data */
+    // ),
+    /* utility; meant to be write only, but allowing reads makes easier verification */
     BT_GATT_CHARACTERISTIC( BT_UUID_DECLARE_128(BT_UUID_WLS_PK),    /* characteristic UUID */  
                             BT_GATT_CHRC_WRITE |                    /* properties */
-                            BT_GATT_CHRC_WRITE_WITHOUT_RESP,                      
-                            BT_GATT_PERM_WRITE,                     /* permissions */
-                            NULL, on_receive,                       /* callbacks (read, write) */
+                            BT_GATT_CHRC_WRITE_WITHOUT_RESP | BT_GATT_CHRC_READ,                      
+                            BT_GATT_PERM_WRITE | BT_GATT_PERM_READ,                     /* permissions */
+                            on_read_passkey, on_receive,                       /* callbacks (read, write) */
                             &passkey                                /* user data */
     ),
     // BT_GATT_CHARACTERISTIC( BT_UUID_DECLARE_128(BT_UUID_WLS_IV),    /* characteristic UUID */  

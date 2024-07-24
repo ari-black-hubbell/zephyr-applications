@@ -9,6 +9,7 @@
 
 /* (Health Data) data to relay a daily health message from the conductor. 
  * 40 bytes.
+ * Note that these are arbitrary default values and can be changed as desired.
  */
 uint16_t health_data[20] = {
     1, 0,           /* packet ID and message version */
@@ -24,8 +25,8 @@ uint16_t health_data[20] = {
     0               /* alarms */
 };
 
-/* function called whenever characteristic is read by a client. 
- * unpacks and outputs requested records from the database.
+/* Function called whenever characteristic is read by a client. 
+ * Unpacks and outputs requested records from the database.
  */
 static ssize_t on_read(struct bt_conn *conn,
 			       const struct bt_gatt_attr *attr, void *buf,
@@ -34,8 +35,6 @@ static ssize_t on_read(struct bt_conn *conn,
 	return bt_gatt_attr_read(conn, attr, buf, len, offset, &health_data,
 				 sizeof(health_data));
 }
-
-
 
 /* A macro to statically register the service in the host stack. 
  */

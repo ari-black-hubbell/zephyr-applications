@@ -13,8 +13,8 @@
 #include <zephyr/bluetooth/uuid.h>
 #include <zephyr/bluetooth/gatt.h>
 #include <zephyr/drivers/gpio.h>
-#include <zephyr/random/random.h>	// prf
-#include <zephyr/crypto/crypto.h>	// cryptography
+#include <zephyr/random/random.h>
+#include <zephyr/crypto/crypto.h>
 
 /* the length of transmission buffers */
 #define MAX_TRANSMIT_SIZE 240

@@ -1,25 +1,21 @@
 # conductor-sensor-emulator
 
-An embedded software project aiming to successfully emulate signals from Conductor Sensors such that data from the emulator is indistinguishable from true sources, with minimal to no required adjustments to enable its use across boards from different manufacturers (e.g., the three boards/DKs used in the BLE custom service projects in this repository, from Nordic, SiLabs, and STMicroelectronics).
+An embedded software project aiming to successfully emulate signals from Conductor Sensors such that data from the emulator is indistinguishable from true sources, with minimal to no required adjustments to enable its use across boards from different manufacturers.
+
+More importantly, however, the project is meant to serve as a proof of concept to showcase Zephyr's feasibility as an alternative to traditional ecosystems for embedded systems development at Hubbell. 
 
 ---
 
-### Some requirements for this project include:
+### Some features of the project in its current state include:
 
-#### Must utilize the appropriate wireless security protocols.
-- Via AES-CCM cryptography for encryption (optional) and the authentication scheme described in the BLE Interface specification document (7.1, required).
+#### BLE advertising support according to the appropriate BLE Interface specification document (4).
+- Advertises relevant device information to establish a connection with the BLE-connected device.
 
-#### Must implement the GATT (General ATTribute profile) database.
-- By defining a database that contains data relevant to all characteristics associated with the GATT server, which may include the following attributes:
-  - The characteristic value.
-  - The characteristic description (a descriptor storing the properties, location, and type of the characteristic value).
-  - The Client Characteristic Configuration (a configuration that allows the GATT server to configure the characteristic to be notified or indicated).
- - Note that the following properties are asociated with each attribute:
-  - A handle (index).
-  - Its type (indicates what the attribute data represents, a UUID).
-  - Permissions (enforces if/how a GATT client device can access the attribute's value).
-- All required characteriistics are in section 6.1.
+#### Basic framework implementations of each custom service and characteristic.
+- Can send and receive data to store or read values for characteristics belonging to the Device Settings, Sensor Information, and Wireless Security custom services' characteristics.
+- LEDs can be toggled via sending bitmask values to Device Service LED characteristic, for supported boards. Note that this feature's implementation may result in a lack of support for other boards due to hardware limitations (i.e., having less than two LEDs to toggle on and off).
 
-#### Must support advertising according to the specifications in the document.
-- Section 4.
-  
+#### Demonstrated hash calculation using Zephyr's cryptography library.
+- Can perform a SHA-256 calculation and reliably obtain the expected hash, which suggests that the adequate authentication scheme and wireless security protocols expected for the conductor sensor (and other products) can be implemented successfully.
+- (Minor) further work on this project would allow the emulator to perform the hash using a value read from the Initialization Vector characteristic, and further development could implement a proper HMAC authentication scheme.
+- Note that encryption may also be implemented rather easily, as shown in `temp/`.

@@ -2,6 +2,8 @@
 
 A collection of simple projects and sample applications developed for Zepher OS.
 
+![image](https://github.com/user-attachments/assets/2ad55643-ffbd-47fa-b128-b6558aa83fc1)
+
 
 -------
 

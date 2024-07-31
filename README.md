@@ -15,20 +15,38 @@ A collection of simple projects and sample applications developed for Zepher OS.
 [Zephyr GitHub page](https://github.com/zephyrproject-rtos/zephyr)
 - Contains all of Zephyr project’s source code.
 
+[Zephyr porting guide](https://docs.zephyrproject.org/latest/hardware/porting/board_porting.html)
+- Although I didn’t really get to use it, it would be cool to return to this page in the future to add Zephyr support to more boards.
+
 [Sample project for implementing Zephyr BLE](https://devzone.nordicsemi.com/guides/nrf-connect-sdk-guides/b/getting-started/posts/ncs-ble-tutorial-part-1-custom-service-in-peripheral-role)
 - The reference I used to help develop my BLE application.
 - Incredibly helpful, though maybe not entirely error-free or up to date.
 
-[Zephyr porting guide](https://docs.zephyrproject.org/latest/hardware/porting/board_porting.html)
-- Although I didn’t really get to use it, it would be cool to return to this page in the future to add Zephyr support to more boards.
+[Zephyr CLI Demo](https://docs.memfault.com/docs/mcu/demo-cli-cmds-ncs-zephyr)
+- A webpage I had saved for implementing a command line interface into the emulator project.
+- I didn't have enough time to implement it, but this might be helpful for future projects.
 
 *Best practices for beginners*
+- Use a virtual environment for everything; it makes it easier to avoid conflicts when adding, removing, or modifying packages.
 - Start from one of the 600+ supported boards.
 - Lean on vendor tooling. The command line is a great resource for more experienced developers, but vendor tooling (like JLink, Simplicity Commander, nRF Connect, and VS Code extensions) can be good for hitting the ground running.
 - Follow training modules, or follow along with sample projects.
 - Explore the tests and samples folders. There are samples for much of the functionality in Zephyr, and there are mandatory tests for each feature to get added to the main branch. If there are no samples for a certain feature, then you can check the tests folder for samples.
-- Golioth -- provides free monthly live and asynchronous training, and hosts informational webcasts about Zephyr and how to use it. I attended one of these and found it very insightful.
+- [Golioth](https://training.golioth.io/): provides free monthly live and asynchronous training, and hosts informational webcasts about Zephyr and how to use it. I attended one of these and found it very insightful.
 
+*Helpful notes*
+- Use the command `west boards` to list all boards supported by Zephyr.
+- The general structure for each project using Zephyr may be as follows:
+  ```
+      - CMakeLists.txt
+      - Kconfig
+      - prj.conf
+      - src/
+           - main.c
+  ```
+- You can find a list of all configuration options for your *prj.conf* file [here](https://docs.zephyrproject.org/2.7.5/reference/kconfig/index-all.html).
+- When working with SiLabs boards, note that Zephyr SDK is not available in Simplicity Studio. I found it much easier to develop all of my projects in VS Code instead, build in the command line, and flash in the command line (for Nordic and STM) or in Simplicity Commander (for SiLabs).
+- Use `printk` instead of `printf`, and note that you can use the config option `CONFIG_LOG_PRINTK` to redirect printk calls to logging.
 
 
 ## projects in this repo
@@ -55,6 +73,9 @@ A collection of simple projects and sample applications developed for Zepher OS.
 [BLE fundamentals course](https://academy.nordicsemi.com/courses/bluetooth-low-energy-fundamentals/)
 - Very informative with clear and concise explanations.
 - (Also free!)
+
+[Intro to BLE audio](https://www.classcentral.com/classroom/youtube-introduction-to-bluetooth-le-audio-130822)
+- An interesting class that I saved but didn't get to use during my internship.
 
 
 
